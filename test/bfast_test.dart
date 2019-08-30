@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:bfast/bfast.dart';
+import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 void main() {
@@ -13,17 +14,20 @@ void main() {
 //    expect(() => calculator.addOne(null), throwsNoSuchMethodError);
   });
 
-  test('get function names', ()  {
+  test('get function names', () async {
+//    try{
+//      var r1 = await http.post('https://ssm.fahamutech.com:8001/ide/function/names',
+//          headers: {'Content-Type':'application/json'}, body: jsonEncode({'name': 'josh'}));
+//      print(r1.body);
+//    }catch(e){
+//      print(e);
+//    }
     final bfast = new BFast();
-    bfast.int(serverUrl: 'https://ssm.fahamutech.com:8001', apiKey: '');
+    bfast.int(serverUrl: 'https://ssm.fahamutech.com:8001', apiKey: 'uuuu');
     try {
-      bfast.fun().names().then((v){
-        print(v);
-      }).catchError((err){
-        print(err);
-      });
-     // print(results);
-      expect(1, 1);
+      var r = await bfast.fun(name: 'hello').names();
+      print(r);
+      expect(1, 2);
     } catch (e) {
       print(e.toString());
     }

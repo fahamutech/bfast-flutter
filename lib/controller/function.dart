@@ -1,6 +1,7 @@
 import 'package:bfast/core/function.dart';
 import 'package:bfast/configuration.dart';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class FunctionController implements FunctionI {
   String _functionName;
@@ -12,9 +13,12 @@ class FunctionController implements FunctionI {
   }
 
   @override
-  Future names() {
-    print('${this._config.getFaasApi()}/name');
-    return http.post('${this._config.getFaasApi()}/name', headers: this._config.getHeaders(), body: {});
+  Future names() async{
+    var headers = this._config.getHeaders();
+    var results = await http.post('${this._config.getFaasApi()}/names',
+        headers: headers, body: jsonEncode({}));
+    // print(results.body);
+    return results.body;
   }
 
   @override

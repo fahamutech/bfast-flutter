@@ -8,7 +8,7 @@ class Config {
     return '${Config.serverUrl}/ide/api/$domain';
   }
 
-  Map<String, dynamic> parseApiUrl(Map<String, dynamic> data) {
+  Map<dynamic, dynamic> parseApiUrl(Map<String, dynamic> data) {
     if (data != null) {
       var stringData = jsonEncode(data);
       stringData = stringData.replaceAll(new RegExp(r'http://ide:3000'), '${Config.serverUrl}/ide/api');
@@ -18,11 +18,14 @@ class Config {
     }
   }
 
-  Map<String, dynamic> getHeaders() {
-    var map = new Map();
-    map['Content-Type'] = 'application/json';
-    map['X-Api-Key'] = Config.apiKey;
-    return map;
+  Map<String, String> getHeaders() {
+//    var map = new Map();
+//    map['Content-Type'] = 'application/json';
+//    map['X-Api-Key'] = Config.apiKey;
+    return {
+      'Content-Type': 'application/json',
+      'X-Api-Key': Config.apiKey
+    };
   }
 
   String getFaasApi() {
