@@ -1,6 +1,7 @@
+import 'dart:async';
+
 import 'package:bfast/core/function.dart';
 import 'package:bfast/configuration.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class FunctionController implements FunctionI {
@@ -13,16 +14,26 @@ class FunctionController implements FunctionI {
   }
 
   @override
-  Future names() async{
+  Future<Map<String, dynamic>> names() async{
     var headers = this._config.getHeaders();
-    var results = await http.post('${this._config.getFaasApi()}/names',
+    var results = await Config.client.post('${this._config.getFaasApi()}/names',
         headers: headers, body: jsonEncode({}));
-    // print(results.body);
-    return results.body;
+    if(results.statusCode == 200){
+      return jsonDecode(results.body);
+    }else{
+      throw Exception(jsonDecode(results.body));
+    }
   }
 
   @override
-  Future run({body = Map}) async {
-    return null;
+  Future run({Map body}) async {
+    var headers = _config.getHeaders();
+    var results = await Config.client.post(_config.getFunctionApi(this._functionName),
+    headers: headers, body: body!=null?jsonEncode(body):jsonEncode({}));
+    if(results.statusCode == 200){
+      return jsonDecode(results.body);
+    }else{
+      throw Exception(jsonDecode(results.body));
+    }
   }
 }

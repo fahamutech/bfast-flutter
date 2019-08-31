@@ -1,5 +1,5 @@
 abstract class FunctionI {
-  Future<dynamic> run({body: Map});
+  Future<dynamic> run({Map body});
 
   Future<dynamic> names();
 }

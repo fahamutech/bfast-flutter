@@ -1,12 +1,31 @@
 
 abstract class DomainI {
-  Map<String, dynamic> set(String name, dynamic value);
-  Map<String, dynamic> setValues(Map<String, dynamic> model);
+  DomainI set(String name, Object value);
+  DomainI setValues(Map<String, Object> model);
   Future<dynamic> save();
-  Future<dynamic> many({options: Map});
-  Future<dynamic> one({link: String, id: String});
+  Future<dynamic> many({Map options});
+  Future<dynamic> one({String link, String id});
   Future<dynamic> navigate(String link);
-  Future<dynamic> search(String name, Map<String, dynamic> options);
-  Future<dynamic> update({link: String, id: String});
-  Future<dynamic> delete({link: String, id: String});
+  Future<dynamic> search(String name, Map<String, Object> options);
+  Future<dynamic> update({String link, String id});
+  Future<dynamic> delete({String link, String id});
 }
+
+//class DomainModel{
+//  Map<String, Object> _model = Map();
+//
+//  DomainModel set(String name, Object value){
+//    this._model[name] = value;
+//    return this;
+//  }
+//
+////  save();
+//}
+//
+//void main(){
+//  var domain = new DomainModel();
+//  domain
+//      .set("name", "Joshua");
+//  domain.set("age", 25);
+//  print(domain._model);
+//}

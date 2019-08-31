@@ -1,8 +1,11 @@
 import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class Config {
   static String serverUrl;
   static String apiKey;
+  static http.Client client;
+
 
   getApiUrl(String domain) {
     return '${Config.serverUrl}/ide/api/$domain';
@@ -19,9 +22,6 @@ class Config {
   }
 
   Map<String, String> getHeaders() {
-//    var map = new Map();
-//    map['Content-Type'] = 'application/json';
-//    map['X-Api-Key'] = Config.apiKey;
     return {
       'Content-Type': 'application/json',
       'X-Api-Key': Config.apiKey
