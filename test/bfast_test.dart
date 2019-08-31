@@ -44,8 +44,150 @@ void main() {
       expect(r['message'], 'Object deleted');
     });
 
+    test("should throw exception when delete a domain", () async {
+      final client = MockClient();
+      final bfast = new BFast();
+      bfast.int(serverUrl: client.mockAPi, httpClient: client, apiKey: '');
 
+      when(client.delete(
+              '${client.mockAPi}/ide/api/tests/5d6912d19470450007f48717',
+              headers: anyNamed('headers')))
+          .thenAnswer(
+              (_) async => http.Response('{"message": "Object deleted"}', 404));
 
+      try {
+        await bfast.domain('tests').delete(id: '5d6912d19470450007f48717');
+      } catch (e) {
+        expect(e, isException);
+      }
+    });
+
+    test('should get many objects of a domain', () async {
+      final client = MockClient();
+      final bfast = new BFast();
+      bfast.int(serverUrl: client.mockAPi, httpClient: client, apiKey: '');
+
+      when(client.get(argThat(startsWith('${client.mockAPi}/ide/api/tests')),
+              headers: anyNamed('headers')))
+          .thenAnswer((_) async => http.Response(
+              ''
+              '{'
+              '"_embedded": {'
+              '"tests": []},'
+              '"page": {},'
+              '"_links": {}}',
+              200));
+
+      //try {
+      var r = await bfast.domain('tests').many();
+      // print(r);
+      expect(r['tests'], isList);
+      // } catch (e) {
+      //  print(e)
+      //   expect(e, isException);
+      // }
+    });
+
+    test('should get one objects of a domain', () async {
+      final client = MockClient();
+      final bfast = new BFast();
+      bfast.int(serverUrl: client.mockAPi, httpClient: client, apiKey: '');
+
+      when(client.get(
+              argThat(startsWith(
+                  '${client.mockAPi}/ide/api/tests/5d690ba79470450007f4870d')),
+              headers: anyNamed('headers')))
+          .thenAnswer((_) async => http.Response(
+              '{'
+              '"name": "Joshua",'
+              '"_links": {} }',
+              200));
+
+      //try {
+      var r = await bfast.domain('tests').one(id: '5d690ba79470450007f4870d');
+      // print(r);
+      expect(r['tests']['name'], "Joshua");
+      // } catch (e) {
+      //  print(e)
+      //   expect(e, isException);
+      // }
+    });
+
+    test('should update one objects of a domain', () async {
+      final client = MockClient();
+      final bfast = new BFast();
+      bfast.int(serverUrl: client.mockAPi, httpClient: client, apiKey: '');
+
+      when(
+          client.patch(
+              argThat(startsWith(
+                  '${client.mockAPi}/ide/api/tests/5d690ba79470450007f4870d')),
+              headers: anyNamed('headers'),
+              body: jsonEncode({"name": "Ethan"}))).thenAnswer(
+          (_) async => http.Response('{"message":"tests object update"}', 200));
+
+      //try {
+      var r = await bfast
+          .domain('tests')
+          .set("name", "Ethan")
+          .update(id: '5d690ba79470450007f4870d');
+      // print(r);
+      expect(r['message'], "tests object update");
+      // } catch (e) {
+      //  print(e)
+      //   expect(e, isException);
+      // }
+    });
+
+    test('should navigate to next objects of a domain', () async {
+      final client = MockClient();
+      final bfast = new BFast();
+      bfast.int(serverUrl: client.mockAPi, httpClient: client, apiKey: '');
+
+      when(client.get(argThat(startsWith('${client.mockAPi}/ide/api/tests?')),
+          headers: anyNamed('headers')))
+          .thenAnswer((_) async => http.Response(
+              '{'
+              '"_embedded": {'
+              '"tests": []},'
+              '"page": {},'
+              '"_links": {}}',
+          200));
+
+      //try {
+      var r = await bfast.domain('tests').navigate('${client.mockAPi}/ide/api/tests?page=1&size=1');
+      // print(r);
+      expect(r['tests'], isList);
+      // } catch (e) {
+      //  print(e)
+      //   expect(e, isException);
+      // }
+    });
+
+    test('should search a domain by using predifined query', () async {
+      final client = MockClient();
+      final bfast = new BFast();
+      bfast.int(serverUrl: client.mockAPi, httpClient: client, apiKey: '');
+
+      when(client.get(argThat(startsWith('${client.mockAPi}/ide/api/tests/search/')),
+          headers: anyNamed('headers')))
+          .thenAnswer((_) async => http.Response(
+              '{'
+              '"_embedded": {'
+              '"tests": []},'
+              '"page": {},'
+              '"_links": {}}',
+          200));
+
+      //try {
+      var r = await bfast.domain('tests').search('findAllBySupplierContainingIgnoreCase', {"supplier":""});
+      // print(r);
+      expect(r['tests'], isList);
+      // } catch (e) {
+      //  print(e)
+      //   expect(e, isException);
+      // }
+    });
 
   });
 

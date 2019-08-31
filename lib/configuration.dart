@@ -6,15 +6,22 @@ class Config {
   static String apiKey;
   static http.Client client;
 
-
-  getApiUrl(String domain) {
-    return '${Config.serverUrl}/ide/api/$domain';
+  getApiUrl(String domain, {Map params}) {
+    if(params!=null){
+      var paramsString = '?';
+      params.forEach((key, value){
+        paramsString = paramsString + '$key=$value&';
+      });
+      return '${Config.serverUrl}/ide/api/$domain$paramsString';
+    }else{
+      return '${Config.serverUrl}/ide/api/$domain';
+    }
   }
 
-  Map<dynamic, dynamic> parseApiUrl(Map<String, dynamic> data) {
+  Map<dynamic, dynamic> parseApiUrl(String data) {
     if (data != null) {
-      var stringData = jsonEncode(data);
-      stringData = stringData.replaceAll(new RegExp(r'http://ide:3000'), '${Config.serverUrl}/ide/api');
+      var stringData = data.replaceAll(
+          new RegExp(r'http://ide:3000'), '${Config.serverUrl}/ide/api');
       return jsonDecode(stringData);
     } else {
       return null;
@@ -22,18 +29,23 @@ class Config {
   }
 
   Map<String, String> getHeaders() {
-    return {
-      'Content-Type': 'application/json',
-      'X-Api-Key': Config.apiKey
-    };
+    return {'Content-Type': 'application/json', 'X-Api-Key': Config.apiKey};
   }
 
   String getFaasApi() {
     return '${Config.serverUrl}/ide/faas';
   }
 
-  String getSearchApi(String domain, String queryName) {
-    return '${this.getApiUrl(domain)}/search/$queryName';
+  String getSearchApi(String domain, String queryName, {Map params}) {
+    if(params!=null){
+      var paramsString = '?';
+      params.forEach((key, value){
+        paramsString = paramsString + '$key=$value&';
+      });
+      return '${this.getApiUrl(domain)}/search/$queryName$paramsString';
+    }else{
+      return '${this.getApiUrl(domain)}/search/$queryName';
+    }
   }
 
   String getFunctionApi(String name) {
