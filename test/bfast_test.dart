@@ -14,23 +14,39 @@ void main() {
     test("should save a domain", () async {
       final client = MockClient();
       final bfast = new BFast();
-      bfast.int(
-          serverUrl: 'http://localhost',
-          httpClient: null,
-          apiKey: '');
-      var r = await bfast
-          .domain('tests')
-          .set("name", "Joshua")
-//          .set("billNumber", "223dsfdgsd5dgh")
-          .save();
+      bfast.int(serverUrl: client.mockAPi, httpClient: client, apiKey: '');
 
-      print(r);
-      expect(1, 2);
-//      when(client.post('${client.mockAPi}/ide/faas/names',
-//          headers: anyNamed('headers'), body: jsonEncode({})))
-//          .thenAnswer(
-//              (_) async => http.Response('{"message": "Not Found"}', 404));
+      when(client.post('${client.mockAPi}/ide/api/tests',
+              headers: anyNamed('headers'),
+              body: jsonEncode({"name": "Joshua"})))
+          .thenAnswer(
+              (_) async => http.Response('{"message": "Object created"}', 201));
+
+      var r = await bfast.domain('tests').set("name", "Joshua").save();
+
+      expect(r['message'], 'Object created');
     });
+
+    test("should delete a domain", () async {
+      final client = MockClient();
+      final bfast = new BFast();
+      bfast.int(serverUrl: client.mockAPi, httpClient: client, apiKey: '');
+
+      when(client.delete(
+              '${client.mockAPi}/ide/api/tests/5d6912d19470450007f48717',
+              headers: anyNamed('headers')))
+          .thenAnswer(
+              (_) async => http.Response('{"message": "Object deleted"}', 204));
+
+      var r =
+          await bfast.domain('tests').delete(id: '5d6912d19470450007f48717');
+      // print(r);
+      expect(r['message'], 'Object deleted');
+    });
+
+
+
+
   });
 
   group('bfast function test', () {

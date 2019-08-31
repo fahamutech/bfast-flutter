@@ -3,7 +3,6 @@ import 'package:bfast/core/domain.dart';
 import 'dart:convert';
 
 class DomainController implements DomainI {
-
   String _domainName;
   Map<String, Object> _model = Map();
   Config _config;
@@ -14,9 +13,27 @@ class DomainController implements DomainI {
   }
 
   @override
-  Future delete({String link, String id}) {
-    // TODO: implement delete
-    return null;
+  Future delete({String link, String id}) async {
+    var headers = this._config.getHeaders();
+    if (link != null) {
+      var results = await Config.client.delete(link, headers: headers);
+      if (results.statusCode.toString().startsWith('2')) {
+        return {"message": "Object deleted"};
+      } else {
+        throw Exception({"message": '${results.reasonPhrase}'});
+      }
+    } else if (id != null) {
+      var results = await Config.client.delete(
+          '${this._config.getApiUrl(this._domainName)}/$id',
+          headers: headers);
+      if (results.statusCode.toString().startsWith('2')) {
+        return {"message": "Object deleted"};
+      } else {
+        throw Exception({"message": '${results.reasonPhrase}'});
+      }
+    }else{
+      throw Exception({"message": "Please provide object id or link"});
+    }
   }
 
   @override
@@ -41,14 +58,15 @@ class DomainController implements DomainI {
   Future save() async {
     var headers = this._config.getHeaders();
     var results = await Config.client.post(
-        this._config.getApiUrl(this._domainName), headers: headers,
+        this._config.getApiUrl(this._domainName),
+        headers: headers,
         body: jsonEncode(this._model));
-    print(results.statusCode);
+//    print(results.statusCode.toString().startsWith('2'));
     this._model = Map();
-    if(results.toString().startsWith('2')){
-      return results.body;
-    }else{
-      throw Exception(results.body);
+    if (results.statusCode.toString().startsWith('2')) {
+      return {"message": 'Object created', this._domainName: results.body};
+    } else {
+      throw Exception({"message": "Fails to create object"});
     }
   }
 
@@ -75,5 +93,4 @@ class DomainController implements DomainI {
     // TODO: implement update
     return null;
   }
-
 }
