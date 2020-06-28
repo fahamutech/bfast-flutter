@@ -6,9 +6,9 @@ import 'dart:convert';
 
 class FunctionController implements FunctionI {
   String _functionName;
-  Config _config;
+  BFastConfig _config;
 
-  FunctionController(String name, Config config) {
+  FunctionController(String name, BFastConfig config) {
     this._functionName = name;
     this._config = config;
   }
@@ -16,7 +16,7 @@ class FunctionController implements FunctionI {
   @override
   Future<Map<String, dynamic>> names() async{
     var headers = this._config.getHeaders();
-    var results = await Config.client.post('${this._config.getFaasApi()}/names',
+    var results = await BFastConfig.client.post('${this._config.getFaasApi()}/names',
         headers: headers, body: jsonEncode({}));
     if(results.statusCode == 200){
       return jsonDecode(results.body);
@@ -28,7 +28,7 @@ class FunctionController implements FunctionI {
   @override
   Future run({Map body}) async {
     var headers = _config.getHeaders();
-    var results = await Config.client.post(_config.getFunctionApi(this._functionName),
+    var results = await BFastConfig.client.post(_config.getFunctionApi(this._functionName),
     headers: headers, body: body!=null?jsonEncode(body):jsonEncode({}));
     if(results.statusCode == 200){
       return jsonDecode(results.body);
