@@ -18,9 +18,9 @@ abstract class QueryAdapter<T> {
 class CacheOptions {
   bool cacheEnable;
   int dtl;
-  Function freshDataCallback;
+  Function({String identifier, dynamic data}) freshDataCallback;
 
-  CacheOptions({bool cacheEnable, int dtl, Function freshDataCallback}) {
+  CacheOptions({bool cacheEnable, int dtl, Function({String identifier, dynamic data}) freshDataCallback}) {
     this.cacheEnable = cacheEnable;
     this.dtl = dtl;
     this.freshDataCallback = freshDataCallback;

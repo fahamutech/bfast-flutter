@@ -1,39 +1,30 @@
 import 'dart:async';
 
-import 'package:bfast/core/function.dart';
-import 'package:bfast/configuration.dart';
-import 'dart:convert';
+import 'package:bfast/adapter/function.dart';
+import 'package:bfast/adapter/rest.dart';
 
-class FunctionController implements FunctionI {
-  String _functionName;
-  BFastConfig _config;
-
-  FunctionController(String name, BFastConfig config) {
-    this._functionName = name;
-    this._config = config;
+class FunctionController<T> implements FunctionAdapter<T> {
+  @override
+  Future delete([RestRequestConfig config]) {
+    // TODO: implement delete
+    throw UnimplementedError();
   }
 
   @override
-  Future<Map<String, dynamic>> names() async{
-    var headers = this._config.getHeaders();
-    var results = await BFastConfig.client.post('${this._config.getFaasApi()}/names',
-        headers: headers, body: jsonEncode({}));
-    if(results.statusCode == 200){
-      return jsonDecode(results.body);
-    }else{
-      throw Exception(jsonDecode(results.body));
-    }
+  Future<T> get([RestRequestConfig config]) {
+    // TODO: implement get
+    throw UnimplementedError();
   }
 
   @override
-  Future run({Map body}) async {
-    var headers = _config.getHeaders();
-    var results = await BFastConfig.client.post(_config.getFunctionApi(this._functionName),
-    headers: headers, body: body!=null?jsonEncode(body):jsonEncode({}));
-    if(results.statusCode == 200){
-      return jsonDecode(results.body);
-    }else{
-      throw Exception(jsonDecode(results.body));
-    }
+  Future<T> post([Map<dynamic, dynamic> data, RestRequestConfig config]) {
+    // TODO: implement post
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<T> put([Map<dynamic, dynamic> data, RestRequestConfig config]) {
+    // TODO: implement put
+    throw UnimplementedError();
   }
 }

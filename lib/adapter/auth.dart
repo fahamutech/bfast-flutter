@@ -1,11 +1,11 @@
 abstract class AuthAdapter<T> {
-  Future<T> authenticated();
+  Future<T> authenticated([AuthOptions options]);
 
   Future<String> getEmail();
 
   Future<String> getUsername();
 
-  Future<T> updateUser(T user, [AuthOptions options]);
+  Future<T> updateUser(Map user, [AuthOptions options]);
 
   Future<String> getSessionToken();
 
