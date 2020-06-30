@@ -3,6 +3,10 @@ import 'package:bfast/adapter/domain.dart';
 import 'package:bfast/adapter/query.dart';
 import 'package:bfast/adapter/rest.dart';
 import 'package:bfast/controller/query.dart';
+import 'package:bfast/controller/rest.dart';
+import 'package:bfast/model/QueryModel.dart';
+
+import '../configuration.dart';
 
 class DomainController<T> implements DomainAdapter<T> {
   String domainName;
@@ -19,9 +23,18 @@ class DomainController<T> implements DomainAdapter<T> {
   }
 
   @override
-  Future delete(String objectId, [RequestOptions options]) {
-    // TODO: implement delete
-    throw UnimplementedError();
+  Future delete(String objectId, [RequestOptions options]) async {
+    try {
+      RestResponse response = await this.restAdapter.delete(
+          '${BFastConfig.getInstance().databaseURL(this.appName)}/classes/${this.domainName}/$objectId',
+          RestRequestConfig(
+              headers: (options != null && options.useMasterKey == true)
+                  ? BFastConfig.getInstance().getMasterHeaders(this.appName)
+                  : BFastConfig.getInstance().getHeaders(this.appName)));
+      return response.data;
+    } catch (e) {
+      throw {"message": this._getErrorMessage(e)};
+    }
   }
 
   @override
@@ -35,27 +48,60 @@ class DomainController<T> implements DomainAdapter<T> {
 
   @override
   Future<List<T>> getAll(
-      [Map<String, dynamic> pagination, RequestOptions options]) {
-    // TODO: implement getAll
-    throw UnimplementedError();
+      [Map<String, dynamic> pagination, RequestOptions options]) async {
+    try {
+      var number = pagination != null
+          ? pagination['size']
+          : await this.query().count({}, options);
+      return await this.query().find(
+          QueryModel(
+              skip: pagination != null ? pagination["skip"] : 0, size: number),
+          options);
+    } catch (e) {
+      throw {"message": this._getErrorMessage(e)};
+    }
   }
 
   @override
   QueryController query<T>([RequestOptions options]) {
-    // TODO: implement query
-    throw UnimplementedError();
+    return QueryController(
+        this.domainName, this.cacheAdapter, this.restAdapter, this.appName);
   }
 
   @override
-  Future<T> save(T model, [RequestOptions options]) {
-    // TODO: implement save
-    throw UnimplementedError();
+  Future<T> save(dynamic model, [RequestOptions options]) async {
+    if (model != null) {
+      try {
+        RestResponse response = await this.restAdapter.post(
+            '${BFastConfig.getInstance().databaseURL(this.appName)}/classes/${this.domainName}',
+            model,
+            RestRequestConfig(
+                headers: (options != null && options.useMasterKey == true)
+                    ? BFastConfig.getInstance().getMasterHeaders(this.appName)
+                    : BFastConfig.getInstance().getHeaders(this.appName)));
+        return response.data;
+      } catch (e) {
+        throw {"message": this._getErrorMessage(e)};
+      }
+    } else {
+      throw {"message": 'please provide data to save'};
+    }
   }
 
   @override
-  Future<T> update(String objectId, T data, [RequestOptions options]) {
-    // TODO: implement update
-    throw UnimplementedError();
+  Future<T> update(String objectId, T data, [RequestOptions options]) async {
+    try {
+      var response = await this.restAdapter.put(
+          '${BFastConfig.getInstance().databaseURL(this.appName)}/classes/${this.domainName}/$objectId',
+          data as dynamic,
+          RestRequestConfig(
+              headers: (options != null && options.useMasterKey == true)
+                  ? BFastConfig.getInstance().getMasterHeaders(this.appName)
+                  : BFastConfig.getInstance().getHeaders(this.appName)));
+      return response.data;
+    } catch (e) {
+      throw {"message": this._getErrorMessage(e)};
+    }
   }
 
   String _getErrorMessage(dynamic err) {

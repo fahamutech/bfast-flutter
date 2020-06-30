@@ -1,19 +1,21 @@
-abstract class RestAdapter<T> {
-  Future<T> get(String url, [RestRequestConfig config]);
+import 'package:bfast/controller/rest.dart';
 
-  Future<T> delete(String url, [RestRequestConfig config]);
+abstract class RestAdapter {
+  Future<RestResponse<T>> get<T>(String url, [RestRequestConfig config]);
 
-  Future<T> head(String url, [RestRequestConfig config]);
+  Future<RestResponse<T>> delete<T>(String url, [RestRequestConfig config]);
 
-  Future<T> options(String url, [RestRequestConfig config]);
+  Future<RestResponse<T>> head<T>(String url, [RestRequestConfig config]);
 
-  Future<T> post(String url,
+  Future<RestResponse<T>> options<T>(String url, [RestRequestConfig config]);
+
+  Future<RestResponse<T>> post<T>(String url,
       [Map<dynamic, dynamic> data, RestRequestConfig config]);
 
-  Future<T> put(String url,
+  Future<RestResponse<T>> put<T>(String url,
       [Map<dynamic, dynamic> data, RestRequestConfig config]);
 
-  Future<T> patch(String url,
+  Future<RestResponse<T>> patch<T>(String url,
       [Map<dynamic, dynamic> data, RestRequestConfig config]);
 }
 

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:bfast/adapter/cache.dart';
 import 'package:bfast/adapter/query.dart';
 import 'package:bfast/adapter/rest.dart';
+import 'package:bfast/controller/rest.dart';
 import 'package:bfast/model/QueryModel.dart';
 
 import '../configuration.dart';
@@ -24,7 +25,7 @@ class QueryController extends QueryAdapter {
   @override
   Future aggregate(List<AggregationOptions> pipeline,
       [RequestOptions options]) async {
-    var pipelineToStrings = jsonEncode(pipeline);
+    String pipelineToStrings = jsonEncode(pipeline);
     pipelineToStrings = pipelineToStrings.length > 7
         ? pipelineToStrings.substring(0, 7)
         : pipelineToStrings;
@@ -157,7 +158,7 @@ class QueryController extends QueryAdapter {
     return data.length == 1 ? data[0] : null;
   }
 
-  Future<dynamic> _distinctReq(dynamic key, QueryModel queryModel,
+  Future<RestResponse> _distinctReq(dynamic key, QueryModel queryModel,
       [RequestOptions options]) {
     return this.restAdapter.get(
         '${BFastConfig.getInstance().databaseURL(this.appName)}/aggregate/${this.collectionName}',
@@ -183,7 +184,7 @@ class QueryController extends QueryAdapter {
             }));
   }
 
-  Future<dynamic> _getReq(String objectId, RequestOptions options) {
+  Future<RestResponse> _getReq(String objectId, RequestOptions options) {
     return this.restAdapter.get(
           '${BFastConfig.getInstance().databaseURL(this.appName)}/classes/${this.collectionName}/$objectId',
           RestRequestConfig(
@@ -193,7 +194,7 @@ class QueryController extends QueryAdapter {
         );
   }
 
-  Future<dynamic> _countReq(Map filter, RequestOptions options) {
+  Future<RestResponse> _countReq(Map filter, RequestOptions options) {
     return this.restAdapter.get(
         '${BFastConfig.getInstance().databaseURL(this.appName)}/classes/${this.collectionName}',
         RestRequestConfig(
@@ -207,7 +208,7 @@ class QueryController extends QueryAdapter {
             }));
   }
 
-  Future<dynamic> _firstReq(QueryModel queryModel, RequestOptions options) {
+  Future<RestResponse> _firstReq(QueryModel queryModel, RequestOptions options) {
     return this.restAdapter.get(
         '${BFastConfig.getInstance().databaseURL(this.appName)}/classes/${this.collectionName}',
         RestRequestConfig(
@@ -229,7 +230,7 @@ class QueryController extends QueryAdapter {
             }));
   }
 
-  Future<dynamic> _aggregateReq(dynamic pipeline, RequestOptions options) {
+  Future<RestResponse> _aggregateReq(dynamic pipeline, RequestOptions options) {
     return this.restAdapter.get(
         '${BFastConfig.getInstance().databaseURL(this.appName)}/aggregate/${this.collectionName}',
         RestRequestConfig(
@@ -239,7 +240,7 @@ class QueryController extends QueryAdapter {
             params: pipeline));
   }
 
-  Future<dynamic> _findReq(QueryModel queryModel, [RequestOptions options]) {
+  Future<RestResponse> _findReq(QueryModel queryModel, [RequestOptions options]) {
     return this.restAdapter.get(
         '${BFastConfig.getInstance().databaseURL(this.appName)}/classes/${this.collectionName}',
         RestRequestConfig(
