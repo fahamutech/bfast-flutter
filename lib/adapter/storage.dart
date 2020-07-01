@@ -1,12 +1,30 @@
 import 'package:bfast/adapter/auth.dart';
 
 abstract class StorageAdapter {
-  String getData();
+  dynamic getData();
 
-  save(BFastFile file, [FileOptions options]);
+  Future<SaveFileResponse> save(BFastFile file, [FileOptions options]);
 }
 
-class BFastFile {}
+class BFastFile {
+  String fileName;
+  String fileType;
+  BFastFileDataMap data;
+
+  BFastFile({String fileName, String fileType, BFastFileDataMap data}) {
+    this.data = data;
+    this.fileName = fileName;
+    this.fileType = fileType;
+  }
+}
+
+class BFastFileDataMap {
+  String base64;
+
+  BFastFileDataMap(String base64) {
+    this.base64 = base64;
+  }
+}
 
 class FileOptions extends AuthOptions {
   bool forceSecure;
@@ -16,8 +34,17 @@ class FileOptions extends AuthOptions {
       [Function progress,
       bool forceSecure,
       bool useMasterKey,
-      String sessionToken]): super(useMasterKey, sessionToken){
+      String sessionToken])
+      : super(useMasterKey, sessionToken) {
     this.forceSecure = forceSecure;
     this.progress = progress;
+  }
+}
+
+class SaveFileResponse {
+  String url;
+
+  SaveFileResponse(String url) {
+    this.url = url;
   }
 }
