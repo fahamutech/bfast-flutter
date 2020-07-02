@@ -25,6 +25,7 @@ class BFastConfig {
   }
 
   String _DEFAULT_AUTH_CACHE_DB_NAME = '__auth';
+
   get DEFAULT_AUTH_CACHE_DB_NAME {
     return this._DEFAULT_AUTH_CACHE_DB_NAME;
   }
@@ -54,14 +55,14 @@ class BFastConfig {
   }
 
   Map<String, dynamic> getHeaders(String appName) {
-    return {
+    return <String, String>{
       'Content-Type': 'application/json',
       'X-Parse-Application-Id': this.credentials[appName].applicationId
     };
   }
 
   Map<String, dynamic> getMasterHeaders(String appName) {
-    return {
+    return <String, String>{
       'Content-Type': 'application/json',
       'X-Parse-Application-Id': this.credentials[appName].applicationId,
       'X-Parse-Master-Key': this.credentials[appName].appPassword,

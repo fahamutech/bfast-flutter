@@ -10,7 +10,7 @@ abstract class QueryAdapter<T> {
 
   Future<T> find(QueryModel queryModel, [RequestOptions options]);
 
-  Future<dynamic> first(QueryModel queryModel, [RequestOptions options]);
+  Future<dynamic> first([QueryModel queryModel, RequestOptions options]);
 
   Future<T> get(String objectId, [RequestOptions options]);
 }

@@ -24,7 +24,6 @@ class DomainController<T> implements DomainAdapter<T> {
 
   @override
   Future delete(String objectId, [RequestOptions options]) async {
-    try {
       RestResponse response = await this.restAdapter.delete(
           '${BFastConfig.getInstance().databaseURL(this.appName)}/classes/${this.domainName}/$objectId',
           RestRequestConfig(
@@ -32,9 +31,6 @@ class DomainController<T> implements DomainAdapter<T> {
                   ? BFastConfig.getInstance().getMasterHeaders(this.appName)
                   : BFastConfig.getInstance().getHeaders(this.appName)));
       return response.data;
-    } catch (e) {
-      throw {"message": this._getErrorMessage(e)};
-    }
   }
 
   @override
@@ -49,17 +45,11 @@ class DomainController<T> implements DomainAdapter<T> {
   @override
   Future<List<T>> getAll(
       [Map<String, dynamic> pagination, RequestOptions options]) async {
-    try {
-      var number = pagination != null
-          ? pagination['size']
-          : await this.query().count({}, options);
+      var number = pagination != null ? pagination['size'] : await this.query().count({}, options);
       return await this.query().find(
           QueryModel(
               skip: pagination != null ? pagination["skip"] : 0, size: number),
           options);
-    } catch (e) {
-      throw {"message": this._getErrorMessage(e)};
-    }
   }
 
   @override
@@ -71,7 +61,6 @@ class DomainController<T> implements DomainAdapter<T> {
   @override
   Future<T> save(dynamic model, [RequestOptions options]) async {
     if (model != null) {
-      try {
         RestResponse response = await this.restAdapter.post(
             '${BFastConfig.getInstance().databaseURL(this.appName)}/classes/${this.domainName}',
             model,
@@ -80,9 +69,6 @@ class DomainController<T> implements DomainAdapter<T> {
                     ? BFastConfig.getInstance().getMasterHeaders(this.appName)
                     : BFastConfig.getInstance().getHeaders(this.appName)));
         return response.data;
-      } catch (e) {
-        throw {"message": this._getErrorMessage(e)};
-      }
     } else {
       throw {"message": 'please provide data to save'};
     }
@@ -90,7 +76,6 @@ class DomainController<T> implements DomainAdapter<T> {
 
   @override
   Future<T> update(String objectId, T data, [RequestOptions options]) async {
-    try {
       var response = await this.restAdapter.put(
           '${BFastConfig.getInstance().databaseURL(this.appName)}/classes/${this.domainName}/$objectId',
           data as dynamic,
@@ -99,9 +84,6 @@ class DomainController<T> implements DomainAdapter<T> {
                   ? BFastConfig.getInstance().getMasterHeaders(this.appName)
                   : BFastConfig.getInstance().getHeaders(this.appName)));
       return response.data;
-    } catch (e) {
-      throw {"message": this._getErrorMessage(e)};
-    }
   }
 
   String _getErrorMessage(dynamic err) {

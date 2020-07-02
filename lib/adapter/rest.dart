@@ -23,15 +23,15 @@ class RestRequestConfig {
   String url;
   String method;
   String baseURL;
-  Map<String, dynamic> headers;
-  Map<dynamic, dynamic> params;
+  Map<String, String> headers;
+  Map<String, dynamic> params;
 
   RestRequestConfig(
   {String url,
       String method,
       String baseURL,
-      Map<String, dynamic> headers,
-      Map<dynamic, dynamic> params}) {
+      Map<String, String> headers,
+      Map<String, dynamic> params}) {
     this.url = url;
     this.method = method;
     this.baseURL = baseURL;

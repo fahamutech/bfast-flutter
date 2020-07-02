@@ -13,7 +13,7 @@ class BFastFunctions {
   }
 
   FunctionAdapter request(String path) {
-    return FunctionController(path, DartHttpClientController(),
+    return FunctionController(path, BFastHttpClientController(),
         appName: this._appName);
   }
 

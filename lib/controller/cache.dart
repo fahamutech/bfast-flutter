@@ -125,3 +125,13 @@ class DatabaseInstance {
     this.db = db;
   }
 }
+
+class CacheOptions {
+  String database;
+  String collection;
+
+  CacheOptions({String database, String collection}) {
+    this.database = database;
+    this.collection = collection;
+  }
+}

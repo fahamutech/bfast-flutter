@@ -35,7 +35,7 @@ class QueryController extends QueryAdapter {
       var cacheResponse = await this.cacheAdapter.get(identifier);
       if (cacheResponse) {
         this._aggregateReq(pipeline, options).then((value) {
-          var data = value.data.results;
+          var data = value.data["results"];
           if (options != null && options.freshDataCallback != null) {
             options.freshDataCallback(identifier: identifier, data: data);
           }
@@ -44,23 +44,24 @@ class QueryController extends QueryAdapter {
         return cacheResponse;
       }
     }
-    var response = await this._aggregateReq(pipeline, options);
+    RestResponse response = await this._aggregateReq(pipeline, options);
     this
         .cacheAdapter
-        .set(identifier, response.data.results)
+        .set(identifier, response.data["results"])
         .catchError((onError) {});
-    return response.data.results;
+    return response.data["results"];
   }
 
   @override
-  Future<int> count([Map filter, RequestOptions options]) async {
+  Future<int> count(
+      [Map<dynamic, dynamic> filter, RequestOptions options]) async {
     var identifier =
         'count_${this.collectionName}_${filter != null ? filter : {}}';
     if (this.cacheAdapter.cacheEnabled(options)) {
       var cacheResponse = await this.cacheAdapter.get(identifier);
       if (cacheResponse) {
         this._countReq(filter, options).then((value) {
-          var data = value.data.count;
+          var data = value.data["count"];
           if (options != null && options.freshDataCallback != null) {
             options.freshDataCallback(identifier: identifier, data: data);
           }
@@ -69,12 +70,12 @@ class QueryController extends QueryAdapter {
         return cacheResponse;
       }
     }
-    var response = await this._countReq(filter, options);
+    RestResponse response = await this._countReq(filter, options);
     this
         .cacheAdapter
-        .set(identifier, response.data.count)
+        .set(identifier, response.data['count'])
         .catchError((onError) {});
-    return response.data.count;
+    return response.data["count"];
   }
 
   @override
@@ -86,7 +87,7 @@ class QueryController extends QueryAdapter {
       var cacheResponse = await this.cacheAdapter.get(identifier);
       if (cacheResponse) {
         this._distinctReq(key, queryModel, options).then((value) {
-          var data = value.data.results;
+          var data = value.data["results"];
           if (options != null && options.freshDataCallback != null) {
             options.freshDataCallback(identifier: identifier, data: data);
           }
@@ -98,9 +99,9 @@ class QueryController extends QueryAdapter {
     var response = await this._distinctReq(key, queryModel, options);
     this
         .cacheAdapter
-        .set(identifier, response.data.results)
+        .set(identifier, response.data["results"])
         .catchError((onError) {});
-    return response.data.results;
+    return response.data["results"];
   }
 
   @override
@@ -111,7 +112,7 @@ class QueryController extends QueryAdapter {
       var cacheResponse = await this.cacheAdapter.get(identifier);
       if (cacheResponse) {
         this._findReq(queryModel, options).then((value) {
-          var data = value.data.results;
+          var data = value.data["results"];
           if (options != null && options.freshDataCallback != null) {
             options.freshDataCallback(identifier: identifier, data: data);
           }
@@ -120,23 +121,23 @@ class QueryController extends QueryAdapter {
         return cacheResponse;
       }
     }
-    var response = await this._findReq(queryModel, options);
+    RestResponse response = await this._findReq(queryModel, options);
     this
         .cacheAdapter
-        .set(identifier, response.data.results)
+        .set(identifier, response.data["results"])
         .catchError((onError) {});
-    return response.data.results;
+    return response.data["results"];
   }
 
   @override
-  Future first(QueryModel queryModel, [RequestOptions options]) async {
+  Future first([QueryModel queryModel, RequestOptions options]) async {
     var identifier =
         'first_${this.collectionName}_${jsonEncode(queryModel != null && queryModel.filter != null ? queryModel.filter : {})}';
     if (this.cacheAdapter.cacheEnabled(options)) {
       var cacheResponse = await this.cacheAdapter.get(identifier);
       if (cacheResponse) {
         this._firstReq(queryModel, options).then((value) {
-          var data = value.data.results;
+          List data = value.data["results"];
           if (options != null && options.freshDataCallback != null) {
             options.freshDataCallback(
                 identifier: identifier,
@@ -150,12 +151,33 @@ class QueryController extends QueryAdapter {
       }
     }
     var response = await _firstReq(queryModel, options);
-    var data = response.data.results;
+    List data = response.data["results"];
     this
         .cacheAdapter
         .set(identifier, data.length == 1 ? data[0] : null)
         .catchError((onError) {});
     return data.length == 1 ? data[0] : null;
+  }
+
+  @override
+  Future get(String objectId, [RequestOptions options]) async {
+    String identifier = this.collectionName + '_' + objectId;
+    if (this.cacheAdapter.cacheEnabled(options)) {
+      var cacheResponse = await this.cacheAdapter.get(identifier);
+      if (cacheResponse) {
+        this._getReq(objectId, options).then((value) {
+          var data = value.data;
+          if (options != null && options.freshDataCallback != null) {
+            options.freshDataCallback(identifier: identifier, data: data);
+          }
+          return this.cacheAdapter.set(identifier, data);
+        }).catchError((e) {});
+        return cacheResponse;
+      }
+    }
+    RestResponse response = await this._getReq(objectId, options);
+    this.cacheAdapter.set(identifier, response.data).catchError((e) {});
+    return response.data;
   }
 
   Future<RestResponse> _distinctReq(dynamic key, QueryModel queryModel,
@@ -194,8 +216,8 @@ class QueryController extends QueryAdapter {
         );
   }
 
-  Future<RestResponse> _countReq(Map filter, RequestOptions options) {
-    return this.restAdapter.get(
+  Future<RestResponse> _countReq<T>(Map filter, RequestOptions options) async {
+    return await this.restAdapter.get<T>(
         '${BFastConfig.getInstance().databaseURL(this.appName)}/classes/${this.collectionName}',
         RestRequestConfig(
             headers: (options != null && options.useMasterKey == true)
@@ -208,7 +230,8 @@ class QueryController extends QueryAdapter {
             }));
   }
 
-  Future<RestResponse> _firstReq(QueryModel queryModel, RequestOptions options) {
+  Future<RestResponse> _firstReq(
+      QueryModel queryModel, RequestOptions options) {
     return this.restAdapter.get(
         '${BFastConfig.getInstance().databaseURL(this.appName)}/classes/${this.collectionName}',
         RestRequestConfig(
@@ -240,7 +263,8 @@ class QueryController extends QueryAdapter {
             params: pipeline));
   }
 
-  Future<RestResponse> _findReq(QueryModel queryModel, [RequestOptions options]) {
+  Future<RestResponse> _findReq(QueryModel queryModel,
+      [RequestOptions options]) {
     return this.restAdapter.get(
         '${BFastConfig.getInstance().databaseURL(this.appName)}/classes/${this.collectionName}',
         RestRequestConfig(
@@ -264,26 +288,5 @@ class QueryController extends QueryAdapter {
                   ? queryModel.filter
                   : {}
             }));
-  }
-
-  @override
-  Future get(String objectId, [RequestOptions options]) async {
-    String identifier = this.collectionName + '_' + objectId;
-    if (this.cacheAdapter.cacheEnabled(options)) {
-      var cacheResponse = await this.cacheAdapter.get(identifier);
-      if (cacheResponse) {
-        this._getReq(objectId, options).then((value) {
-          var data = value.data;
-          if (options != null && options.freshDataCallback != null) {
-            options.freshDataCallback(identifier: identifier, data: data);
-          }
-          return this.cacheAdapter.set(identifier, data);
-        }).catchError((e) {});
-        return cacheResponse;
-      }
-    }
-    var response = await this._getReq(objectId, options);
-    this.cacheAdapter.set(identifier, response.data).catchError((e) {});
-    return response.data;
   }
 }
