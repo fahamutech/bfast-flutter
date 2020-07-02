@@ -1,35 +1,46 @@
 library bfast;
 
+import 'package:bfast/adapter/auth.dart';
+import 'package:bfast/adapter/cache.dart';
+import 'package:bfast/adapter/storage.dart';
+import 'package:bfast/bfast_functions.dart';
 import 'package:bfast/configuration.dart';
-import 'package:bfast/controller/domain.dart';
-import 'package:bfast/controller/function.dart';
-import 'package:http/http.dart' as http;
-
+import 'package:bfast/controller/auth.dart';
+import 'package:bfast/controller/cache.dart';
+import 'package:bfast/controller/rest.dart';
+import 'package:bfast/controller/storage.dart';
 
 class BFast {
-  static int(AppCredentials options, [String appName = BFastConfig.DEFAULT_APP]) {
-//    BFastConfig.serverUrl = serverUrl;
-//    BFastConfig.apiKey = apiKey;
-//    if (httpClient != null) {
-//      BFastConfig.client = httpClient;
-//    } else {
-//      BFastConfig.client = http.Client();
-//    }
+  static int(AppCredentials options,
+      [String appName = BFastConfig.DEFAULT_APP]) {
+    options.cache = CacheConfigOptions(false);
+    return BFastConfig.getInstance(options, appName).getAppCredential(appName);
   }
 
-  DomainController domain(String name) {
-   // return DomainController(name, BFastConfig());
+  static BFastConfig getConfig() {
+    return BFastConfig.getInstance();
   }
 
-  DomainController collection(String name) {
-    return domain(name);
+  static const utils = {"USER_DOMAIN_NAME": '_User'};
+
+  static BFastFunctions functions([String appName = BFastConfig.DEFAULT_APP]) {
+    return BFastFunctions(appName: appName);
   }
 
-  DomainController table(String name) {
-    return domain(name);
+  static StorageAdapter storage([String appName = BFastConfig.DEFAULT_APP]) {
+    return StorageController(DartHttpClientController(), appName: appName);
   }
 
-  FunctionController fun({String name}) {
-   // return FunctionController(name, BFastConfig());
+  static AuthAdapter auth([String appName = BFastConfig.DEFAULT_APP]) {
+    return new AuthController(
+        DartHttpClientController(),
+        CacheController(
+            appName,
+            BFastConfig.getInstance().getCacheDatabaseName(
+                BFastConfig.getInstance().DEFAULT_AUTH_CACHE_DB_NAME, appName),
+            BFastConfig.getInstance().getCacheCollectionName('cache', appName)),
+        appName);
   }
+
+  static CacheAdapter cache([String appName = BFastConfig.DEFAULT_APP]) {}
 }

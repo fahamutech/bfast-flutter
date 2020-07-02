@@ -24,6 +24,11 @@ class BFastConfig {
     return this._DEFAULT_CACHE_TTL_COLLECTION_NAME;
   }
 
+  String _DEFAULT_AUTH_CACHE_DB_NAME = '__auth';
+  get DEFAULT_AUTH_CACHE_DB_NAME {
+    return this._DEFAULT_AUTH_CACHE_DB_NAME;
+  }
+
   Map<String, AppCredentials> credentials = {};
 
   BFastConfig._();

@@ -1,9 +1,9 @@
 import 'package:bfast/adapter/query.dart';
 
-abstract class CacheAdapter<T> {
-  Future<T> set(String identifier, T data, [int dtl]);
+abstract class CacheAdapter {
+  Future<T> set<T>(String identifier, T data, [int dtl]);
 
-  Future<T> get(String identifier);
+  Future<T> get<T>(String identifier);
 
   Future<List<String>> keys();
 
