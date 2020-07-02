@@ -26,20 +26,38 @@ void main() {
       BFastHttpClientController(httpClient: null),
       BFastConfig.DEFAULT_APP);
 
-
   group('Save data to bfast cloud database', () {
     test("should save data", () async {
       when(mockHttpClient.post(
-              argThat(startsWith('${mockHttpClient.mockDaasAPi}/classes/test')),
-              headers: anyNamed('headers'),
-              body: {"name": "Joshua"}))
-          .thenAnswer(
-              (_) async => http.Response('{"objectId": "WpBNH3dAKXFEf6D0", "createdAt": "2020-07-02T17:13:54.411Z"}', 200));
+          argThat(startsWith('${mockHttpClient.mockDaasAPi}/classes/test')),
+          headers: anyNamed('headers'),
+          body: jsonEncode(
+              {"name": "Joshua"}))).thenAnswer((_) async => http.Response(
+          '{"objectId": "WpBNH3dAKXFEf6D0", "createdAt": "2020-07-02T17:13:54.411Z"}',
+          200));
 
       var r = await domainController.save({"name": "Joshua"});
-      print(r);
       expect(r['objectId'], 'WpBNH3dAKXFEf6D0');
-      expect(r["createdAt"], !null);
+      // expect(r["createdAt"], !null);
     });
+
+    test("should not save null data", () async {
+      try {
+        await domainController.save(null);
+      } catch (r) {
+        expect(r['message'], 'please provide data to save');
+      }
+    });
+
+    test("should not save same object twice", ()async{
+      try {
+        var r = await domainController.save({"objectId":'WpBNH3dAKXFEf6D0',"name":'joshua'});
+        print(r);
+      } catch (r) {
+        print(r);
+        // expect(r['message'], 'please provide data to save');
+      }
+    });
+
   });
 }

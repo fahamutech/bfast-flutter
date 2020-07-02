@@ -23,7 +23,7 @@ class BFastHttpClientController extends RestAdapter {
     if (response.statusCode.toString().startsWith('20')) {
       return RestResponse(data: jsonDecode(response.body));
     } else {
-      throw response.reasonPhrase;
+      throw {"message": response.reasonPhrase, "statusCode": response.statusCode};
     }
   }
 
@@ -35,7 +35,7 @@ class BFastHttpClientController extends RestAdapter {
     if (response.statusCode.toString().startsWith('20')) {
       return RestResponse(data: jsonDecode(response.body));
     } else {
-      throw response.reasonPhrase;
+      throw {"message": response.reasonPhrase, "statusCode": response.statusCode};
     }
   }
 
@@ -60,7 +60,7 @@ class BFastHttpClientController extends RestAdapter {
     if (response.statusCode.toString().startsWith('20')) {
       return RestResponse(data: jsonDecode(response.body));
     } else {
-      throw response.reasonPhrase;
+      throw {"message": response.reasonPhrase, "statusCode": response.statusCode};
     }
   }
 
@@ -73,7 +73,7 @@ class BFastHttpClientController extends RestAdapter {
     if (response.statusCode.toString().startsWith('20')) {
       return RestResponse(data: jsonDecode(response.body));
     } else {
-      throw response.reasonPhrase;
+      throw {"message": response.reasonPhrase, "statusCode": response.statusCode};
     }
   }
 
@@ -87,7 +87,7 @@ class BFastHttpClientController extends RestAdapter {
     if (response.statusCode.toString().startsWith('20')) {
       return RestResponse(data: jsonDecode(response.body));
     } else {
-      throw response.reasonPhrase;
+      throw {"message": response.reasonPhrase, "statusCode": response.statusCode};
     }
   }
 
@@ -101,7 +101,7 @@ class BFastHttpClientController extends RestAdapter {
     if (response.statusCode.toString().startsWith('20')) {
       return RestResponse(data: jsonDecode(response.body));
     } else {
-      throw response.reasonPhrase;
+      throw {"message": response.body, "statusCode": response.statusCode};
     }
   }
 
@@ -110,12 +110,12 @@ class BFastHttpClientController extends RestAdapter {
       [Map<dynamic, dynamic> data, RestRequestConfig config]) async {
     var response = await this._httpClient.put(
         this._encodeUrlQueryParams(url, config?.params),
-        body: data,
+        body: jsonEncode(data),
         headers: config?.headers);
     if (response.statusCode.toString().startsWith('20')) {
       return RestResponse(data: jsonDecode(response.body));
     } else {
-      throw response.reasonPhrase;
+      throw {"message": response.reasonPhrase, "statusCode": response.statusCode};
     }
   }
 }
