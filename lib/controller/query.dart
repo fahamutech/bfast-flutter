@@ -8,7 +8,7 @@ import 'package:bfast/model/QueryModel.dart';
 
 import '../configuration.dart';
 
-class QueryController extends QueryAdapter {
+class QueryController<T> extends QueryAdapter<T> {
   String collectionName;
   String appName;
   RestAdapter restAdapter;
@@ -23,7 +23,7 @@ class QueryController extends QueryAdapter {
   }
 
   @override
-  Future aggregate(List<AggregationOptions> pipeline,
+  Future<List<T>> aggregate(List<AggregationOptions> pipeline,
       [RequestOptions options]) async {
     String pipelineToStrings = jsonEncode(pipeline);
     pipelineToStrings = pipelineToStrings.length > 7
@@ -65,7 +65,7 @@ class QueryController extends QueryAdapter {
           if (options != null && options.freshDataCallback != null) {
             options.freshDataCallback(identifier: identifier, data: data);
           }
-          return this.cacheAdapter.set(identifier, data);
+          return this.cacheAdapter.set<int>(identifier, data);
         }).catchError((onError) {});
         return cacheResponse;
       }
@@ -79,7 +79,7 @@ class QueryController extends QueryAdapter {
   }
 
   @override
-  Future distinct<K>(K key, QueryModel queryModel,
+  Future<T> distinct<K>(K key, QueryModel queryModel,
       [RequestOptions options]) async {
     var identifier =
         'distinct_${this.collectionName}_${jsonEncode(queryModel != null && queryModel.filter != null ? queryModel.filter : {})}';
@@ -105,7 +105,7 @@ class QueryController extends QueryAdapter {
   }
 
   @override
-  Future find(QueryModel queryModel, [RequestOptions options]) async {
+  Future<List<T>> find(QueryModel queryModel, [RequestOptions options]) async {
     var identifier =
         'find_${this.collectionName}_${jsonEncode(queryModel != null && queryModel.filter != null ? queryModel.filter : {})}';
     if (this.cacheAdapter.cacheEnabled(options)) {
@@ -130,7 +130,7 @@ class QueryController extends QueryAdapter {
   }
 
   @override
-  Future first([QueryModel queryModel, RequestOptions options]) async {
+  Future<T> first([QueryModel queryModel, RequestOptions options]) async {
     var identifier =
         'first_${this.collectionName}_${jsonEncode(queryModel != null && queryModel.filter != null ? queryModel.filter : {})}';
     if (this.cacheAdapter.cacheEnabled(options)) {
@@ -160,7 +160,7 @@ class QueryController extends QueryAdapter {
   }
 
   @override
-  Future get(String objectId, [RequestOptions options]) async {
+  Future<T> get(String objectId, [RequestOptions options]) async {
     String identifier = this.collectionName + '_' + objectId;
     if (this.cacheAdapter.cacheEnabled(options)) {
       var cacheResponse = await this.cacheAdapter.get(identifier);
@@ -200,7 +200,9 @@ class QueryController extends QueryAdapter {
                   ? queryModel.keys?.join(',')
                   : null,
               "where": (queryModel != null && queryModel.filter != null)
-                  ? queryModel.filter
+                  ? queryModel.filter is Map
+                      ? jsonEncode(queryModel.filter)
+                      : queryModel.filter
                   : {},
               "distinct": key
             }));
@@ -217,7 +219,7 @@ class QueryController extends QueryAdapter {
   }
 
   Future<RestResponse> _countReq<T>(Map filter, RequestOptions options) async {
-    return await this.restAdapter.get<T>(
+    return await this.restAdapter.get<dynamic, T>(
         '${BFastConfig.getInstance().databaseURL(this.appName)}/classes/${this.collectionName}',
         RestRequestConfig(
             headers: (options != null && options.useMasterKey == true)
@@ -226,7 +228,9 @@ class QueryController extends QueryAdapter {
             params: {
               "count": 1,
               "limit": 0,
-              "where": filter != null ? filter : {}
+              "where": (filter != null)
+                  ? filter is Map ? jsonEncode(filter) : filter
+                  : {}
             }));
   }
 
@@ -248,7 +252,9 @@ class QueryController extends QueryAdapter {
                   ? queryModel.keys?.join(',')
                   : null,
               "where": (queryModel != null && queryModel.filter != null)
-                  ? queryModel.filter
+                  ? queryModel.filter is Map
+                      ? jsonEncode(queryModel.filter)
+                      : queryModel.filter
                   : {}
             }));
   }
@@ -285,7 +291,9 @@ class QueryController extends QueryAdapter {
                   ? queryModel.keys?.join(',')
                   : null,
               "where": (queryModel != null && queryModel.filter != null)
-                  ? queryModel.filter
+                  ? queryModel.filter is Map
+                      ? jsonEncode(queryModel.filter)
+                      : queryModel.filter
                   : {}
             }));
   }

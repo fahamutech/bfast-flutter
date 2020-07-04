@@ -1,16 +1,16 @@
 import 'package:bfast/model/QueryModel.dart';
 
 abstract class QueryAdapter<T> {
-  Future<T> aggregate(List<AggregationOptions> pipeline,
+  Future<List<T>> aggregate(List<AggregationOptions> pipeline,
       [RequestOptions options]);
 
   Future<int> count([Map<dynamic, dynamic> filter, RequestOptions options]);
 
   Future<T> distinct<K>(K key, QueryModel queryModel, [RequestOptions options]);
 
-  Future<T> find(QueryModel queryModel, [RequestOptions options]);
+  Future<List<T>> find(QueryModel queryModel, [RequestOptions options]);
 
-  Future<dynamic> first([QueryModel queryModel, RequestOptions options]);
+  Future<T> first([QueryModel queryModel, RequestOptions options]);
 
   Future<T> get(String objectId, [RequestOptions options]);
 }

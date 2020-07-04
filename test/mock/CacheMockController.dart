@@ -10,8 +10,7 @@ class CacheMockController extends CacheAdapter {
 
   @override
   bool cacheEnabled([RequestOptions options]) {
-    // TODO: implement cacheEnabled
-    throw UnimplementedError();
+    return false;
   }
 
   @override

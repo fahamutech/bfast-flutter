@@ -47,7 +47,7 @@ class RealtimeController extends RealtimeAdapter {
 
   void open() {
     if (this.socket.disconnected) {
-      this.socket.open();
+      this.socket.connect();
     }
   }
 }

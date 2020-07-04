@@ -8,7 +8,7 @@ import 'package:bfast/model/QueryModel.dart';
 
 import '../configuration.dart';
 
-class DomainController<T> implements DomainAdapter<T> {
+class DomainController implements DomainAdapter {
   String domainName;
   CacheAdapter cacheAdapter;
   RestAdapter restAdapter;
@@ -23,18 +23,18 @@ class DomainController<T> implements DomainAdapter<T> {
   }
 
   @override
-  Future delete(String objectId, [RequestOptions options]) async {
-      RestResponse response = await this.restAdapter.delete(
-          '${BFastConfig.getInstance().databaseURL(this.appName)}/classes/${this.domainName}/$objectId',
-          RestRequestConfig(
-              headers: (options != null && options.useMasterKey == true)
-                  ? BFastConfig.getInstance().getMasterHeaders(this.appName)
-                  : BFastConfig.getInstance().getHeaders(this.appName)));
-      return response.data;
+  Future<R> delete<R>(String objectId, [RequestOptions options]) async {
+    RestResponse response = await this.restAdapter.delete(
+        '${BFastConfig.getInstance().databaseURL(this.appName)}/classes/${this.domainName}/$objectId',
+        RestRequestConfig(
+            headers: (options != null && options.useMasterKey == true)
+                ? BFastConfig.getInstance().getMasterHeaders(this.appName)
+                : BFastConfig.getInstance().getHeaders(this.appName)));
+    return response.data;
   }
 
   @override
-  Future get(String objectId, [RequestOptions options]) async {
+  Future<T> get<T>(String objectId, [RequestOptions options]) async {
     try {
       return await this.query().get(objectId, options);
     } catch (e) {
@@ -43,47 +43,50 @@ class DomainController<T> implements DomainAdapter<T> {
   }
 
   @override
-  Future<List<T>> getAll(
+  Future<List<T>> getAll<T>(
       [Map<String, dynamic> pagination, RequestOptions options]) async {
-      var number = pagination != null ? pagination['size'] : await this.query().count({}, options);
-      return await this.query().find(
-          QueryModel(
-              skip: pagination != null ? pagination["skip"] : 0, size: number),
-          options);
+    var number = pagination != null
+        ? pagination['size']
+        : await this.query().count({}, options);
+    return await this.query().find(
+        QueryModel(
+            skip: pagination != null ? pagination["skip"] : 0, size: number),
+        options);
   }
 
   @override
-  QueryController query<T>([RequestOptions options]) {
+  QueryController<T> query<T>([RequestOptions options]) {
     return QueryController(
         this.domainName, this.cacheAdapter, this.restAdapter, this.appName);
   }
 
   @override
-  Future<T> save(dynamic model, [RequestOptions options]) async {
+  Future<R> save<T, R>(T model, [RequestOptions options]) async {
     if (model != null) {
-        RestResponse response = await this.restAdapter.post(
-            '${BFastConfig.getInstance().databaseURL(this.appName)}/classes/${this.domainName}',
-            model,
-            RestRequestConfig(
-                headers: (options != null && options.useMasterKey == true)
-                    ? BFastConfig.getInstance().getMasterHeaders(this.appName)
-                    : BFastConfig.getInstance().getHeaders(this.appName)));
-        return response.data;
+      RestResponse response = await this.restAdapter.post(
+          '${BFastConfig.getInstance().databaseURL(this.appName)}/classes/${this.domainName}',
+          model,
+          RestRequestConfig(
+              headers: (options != null && options.useMasterKey == true)
+                  ? BFastConfig.getInstance().getMasterHeaders(this.appName)
+                  : BFastConfig.getInstance().getHeaders(this.appName)));
+      return response.data;
     } else {
       throw {"message": 'please provide data to save'};
     }
   }
 
   @override
-  Future<T> update(String objectId, T data, [RequestOptions options]) async {
-      var response = await this.restAdapter.put(
-          '${BFastConfig.getInstance().databaseURL(this.appName)}/classes/${this.domainName}/$objectId',
-          data as dynamic,
-          RestRequestConfig(
-              headers: (options != null && options.useMasterKey == true)
-                  ? BFastConfig.getInstance().getMasterHeaders(this.appName)
-                  : BFastConfig.getInstance().getHeaders(this.appName)));
-      return response.data;
+  Future<R> update<T, R>(String objectId, T data,
+      [RequestOptions options]) async {
+    var response = await this.restAdapter.put<T, dynamic>(
+        '${BFastConfig.getInstance().databaseURL(this.appName)}/classes/${this.domainName}/$objectId',
+        data,
+        RestRequestConfig(
+            headers: (options != null && options.useMasterKey == true)
+                ? BFastConfig.getInstance().getMasterHeaders(this.appName)
+                : BFastConfig.getInstance().getHeaders(this.appName)));
+    return response.data;
   }
 
   String _getErrorMessage(dynamic err) {

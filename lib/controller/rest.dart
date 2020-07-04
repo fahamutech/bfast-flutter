@@ -15,27 +15,42 @@ class BFastHttpClientController extends RestAdapter {
   }
 
   @override
-  Future<RestResponse<T>> delete<T>(String url,
+  Future<RestResponse<R>> delete<T, R>(String url,
       [RestRequestConfig config]) async {
     var response = await this._httpClient.delete(
         this._encodeUrlQueryParams(url, config?.params),
         headers: config?.headers);
     if (response.statusCode.toString().startsWith('20')) {
-      return RestResponse(data: jsonDecode(response.body));
+      return RestResponse(
+          data: response.body.startsWith('{')
+              ? jsonDecode(response.body)
+              : response.body);
     } else {
-      throw {"message": response.reasonPhrase, "statusCode": response.statusCode};
+      throw {
+        "message": response.body,
+        "reason": response.reasonPhrase,
+        "statusCode": response.statusCode
+      };
     }
   }
 
   @override
-  Future<RestResponse<T>> get<T>(String url, [RestRequestConfig config]) async {
+  Future<RestResponse<R>> get<T, R>(String url,
+      [RestRequestConfig config]) async {
     var response = await this._httpClient.get(
         this._encodeUrlQueryParams(url, config?.params),
         headers: config?.headers);
     if (response.statusCode.toString().startsWith('20')) {
-      return RestResponse(data: jsonDecode(response.body));
+      return RestResponse(
+          data: response.body.startsWith('{')
+              ? jsonDecode(response.body)
+              : response.body);
     } else {
-      throw {"message": response.reasonPhrase, "statusCode": response.statusCode};
+      throw {
+        "message": response.body,
+        "reason": response.reasonPhrase,
+        "statusCode": response.statusCode
+      };
     }
   }
 
@@ -52,70 +67,105 @@ class BFastHttpClientController extends RestAdapter {
   }
 
   @override
-  Future<RestResponse<T>> head<T>(String url,
+  Future<RestResponse<R>> head<T, R>(String url,
       [RestRequestConfig config]) async {
     var response = await this._httpClient.head(
         this._encodeUrlQueryParams(url, config?.params),
         headers: config?.headers);
     if (response.statusCode.toString().startsWith('20')) {
-      return RestResponse(data: jsonDecode(response.body));
+      return RestResponse(
+          data: response.body.startsWith('{')
+              ? jsonDecode(response.body)
+              : response.body);
     } else {
-      throw {"message": response.reasonPhrase, "statusCode": response.statusCode};
+      throw {
+        "message": response.body,
+        "reason": response.reasonPhrase,
+        "statusCode": response.statusCode
+      };
     }
   }
 
   @override
-  Future<RestResponse<T>> options<T>(String url,
+  Future<RestResponse<R>> options<T, R>(String url,
       [RestRequestConfig config]) async {
     var response = await this._httpClient.head(
         this._encodeUrlQueryParams(url, config?.params),
         headers: config?.headers);
     if (response.statusCode.toString().startsWith('20')) {
-      return RestResponse(data: jsonDecode(response.body));
+      return RestResponse(
+          data: response.body.startsWith('{')
+              ? jsonDecode(response.body)
+              : response.body);
     } else {
-      throw {"message": response.reasonPhrase, "statusCode": response.statusCode};
+      throw {
+        "message": response.body,
+        "reason": response.reasonPhrase,
+        "statusCode": response.statusCode
+      };
     }
   }
 
   @override
-  Future<RestResponse<T>> patch<T>(String url,
-      [Map<dynamic, dynamic> data, RestRequestConfig config]) async {
+  Future<RestResponse<R>> patch<T, R>(String url,
+      [T data, RestRequestConfig config]) async {
     var response = await this._httpClient.patch(
         this._encodeUrlQueryParams(url, config?.params),
         body: data,
         headers: config?.headers);
     if (response.statusCode.toString().startsWith('20')) {
-      return RestResponse(data: jsonDecode(response.body));
+      return RestResponse(
+          data: response.body.startsWith('{')
+              ? jsonDecode(response.body)
+              : response.body);
     } else {
-      throw {"message": response.reasonPhrase, "statusCode": response.statusCode};
+      throw {
+        "message": response.body,
+        "reason": response.reasonPhrase,
+        "statusCode": response.statusCode
+      };
     }
   }
 
   @override
-  Future<RestResponse<T>> post<T>(String url,
-      [Map<dynamic, dynamic> data, RestRequestConfig config]) async {
+  Future<RestResponse<R>> post<T, R>(String url,
+      [T data, RestRequestConfig config]) async {
     var response = await this._httpClient.post(
         this._encodeUrlQueryParams(url, config?.params),
-        body: jsonEncode(data),
+        body: (data != null && data is Map) ? jsonEncode(data) : data,
         headers: config?.headers);
     if (response.statusCode.toString().startsWith('20')) {
-      return RestResponse(data: jsonDecode(response.body));
+      return RestResponse(
+          data: response.body.startsWith('{')
+              ? jsonDecode(response.body)
+              : response.body);
     } else {
-      throw {"message": response.body, "statusCode": response.statusCode};
+      throw {
+        "message": response.body,
+        "reason": response.reasonPhrase,
+        "statusCode": response.statusCode
+      };
     }
   }
 
   @override
-  Future<RestResponse<T>> put<T>(String url,
-      [Map<dynamic, dynamic> data, RestRequestConfig config]) async {
+  Future<RestResponse<R>> put<T, R>(String url,
+      [T data, RestRequestConfig config]) async {
     var response = await this._httpClient.put(
         this._encodeUrlQueryParams(url, config?.params),
         body: jsonEncode(data),
         headers: config?.headers);
     if (response.statusCode.toString().startsWith('20')) {
-      return RestResponse(data: jsonDecode(response.body));
+      return RestResponse(
+          data: response.body.startsWith('{')
+              ? jsonDecode(response.body)
+              : response.body);
     } else {
-      throw {"message": response.reasonPhrase, "statusCode": response.statusCode};
+      throw {
+        "message": response.body,
+        "reason": response.reasonPhrase,
+        "statusCode": response.statusCode
+      };
     }
   }
 }

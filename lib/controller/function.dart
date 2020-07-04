@@ -24,10 +24,10 @@ class FunctionController<T> implements FunctionAdapter<T> {
       deleteConfig = config;
     } else {
       deleteConfig.headers = BFastConfig.getInstance().getHeaders(this.appName);
-      deleteConfig.params = config.params;
-      deleteConfig.url = config.url;
-      deleteConfig.method = config.method;
-      deleteConfig.baseURL = config.baseURL;
+      deleteConfig.params = config?.params;
+      deleteConfig.url = config?.url;
+      deleteConfig.method = config?.method;
+      deleteConfig.baseURL = config?.baseURL;
     }
     RestResponse response = await this.restAdapter.delete(
         BFastConfig.getInstance().functionsURL(this.functionPath, this.appName),
@@ -42,10 +42,10 @@ class FunctionController<T> implements FunctionAdapter<T> {
       getConfig = config;
     } else {
       getConfig.headers = BFastConfig.getInstance().getHeaders(this.appName);
-      getConfig.params = config.params;
-      getConfig.url = config.url;
-      getConfig.method = config.method;
-      getConfig.baseURL = config.baseURL;
+      getConfig.params = config?.params;
+      getConfig.url = config?.url;
+      getConfig.method = config?.method;
+      getConfig.baseURL = config?.baseURL;
     }
     RestResponse response = await this.restAdapter.get(
         BFastConfig.getInstance().functionsURL(this.functionPath, this.appName),
@@ -61,10 +61,10 @@ class FunctionController<T> implements FunctionAdapter<T> {
         postConfig = config;
       } else {
         postConfig.headers = BFastConfig.getInstance().getHeaders(this.appName);
-        postConfig.params = config.params;
-        postConfig.url = config.url;
-        postConfig.method = config.method;
-        postConfig.baseURL = config.baseURL;
+        postConfig.params = config?.params;
+        postConfig.url = config?.url;
+        postConfig.method = config?.method;
+        postConfig.baseURL = config?.baseURL;
       }
       RestResponse value = await this.restAdapter.post(
           BFastConfig.getInstance()
@@ -84,10 +84,10 @@ class FunctionController<T> implements FunctionAdapter<T> {
       putConfig = config;
     } else {
       putConfig.headers = BFastConfig.getInstance().getHeaders(this.appName);
-      putConfig.params = config.params;
-      putConfig.url = config.url;
-      putConfig.method = config.method;
-      putConfig.baseURL = config.baseURL;
+      putConfig.params = config?.params;
+      putConfig.url = config?.url;
+      putConfig.method = config?.method;
+      putConfig.baseURL = config?.baseURL;
     }
     RestResponse response = await this.restAdapter.put(
         BFastConfig.getInstance().functionsURL(this.functionPath, this.appName),
