@@ -67,7 +67,7 @@ class AuthController extends AuthAdapter {
 
   @override
   Future logIn(String username, String password, [AuthOptions options]) async {
-    const getHeader = {};
+    var getHeader = <String, String>{};
     if (options != null && options.useMasterKey == true) {
       getHeader.addAll({
         'X-Parse-Master-Key': BFastConfig.getInstance()
@@ -128,7 +128,7 @@ class AuthController extends AuthAdapter {
   @override
   Future signUp(String username, String password, Map<String, dynamic> attrs,
       [AuthOptions options]) async {
-    const postHeaders = {};
+    var postHeaders = <String, String>{};
     if (options != null && options.useMasterKey == true) {
       postHeaders.addAll({
         'X-Parse-Master-Key': BFastConfig.getInstance()
@@ -140,7 +140,7 @@ class AuthController extends AuthAdapter {
       'X-Parse-Application-Id':
           BFastConfig.getInstance().getAppCredential(this.appName).applicationId
     });
-    const userData = {};
+    var userData = {};
     userData["username"] = username;
     userData["password"] = password;
     userData.addAll(attrs);
@@ -175,7 +175,7 @@ class AuthController extends AuthAdapter {
   }
 
   Map _geHeadersWithToken(Map user, [AuthOptions options]) {
-    const postHeader = {};
+    var postHeader = <String, String>{};
     if (options != null && options.useMasterKey == true) {
       postHeader.addAll({
         'X-Parse-Master-Key': BFastConfig.getInstance()

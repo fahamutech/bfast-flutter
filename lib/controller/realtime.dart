@@ -14,7 +14,7 @@ class RealtimeController extends RealtimeAdapter {
       void Function(dynamic e) onDisconnect}) {
     this.socket = io(
         BFastConfig.getInstance().functionsURL('/', appName), <String, dynamic>{
-      //  'transports': ['websocket'],
+      'transports': ['websocket'],
       'autoConnect': false,
       // 'extraHeaders': {'foo': 'bar'} // optional
     });
@@ -26,6 +26,7 @@ class RealtimeController extends RealtimeAdapter {
     if (onDisconnect != null) {
       this.socket.on("disconnect", (data) => onDisconnect(data));
     }
+    this.open();
   }
 
   @override
@@ -34,20 +35,15 @@ class RealtimeController extends RealtimeAdapter {
   }
 
   @override
-  void listener(dynamic Function({dynamic auth, dynamic payload}) handler) {
-    this.socket.on(this.eventName,
-        (data) => handler(auth: data?.auth, payload: data?.payload));
+  void listener(void Function(dynamic data) handler) {
+    this.socket.on(this.eventName, (data) => handler(data));
   }
 
   void close() {
-    if (this.socket.connected) {
-      this.socket.disconnect();
-    }
+    this.socket.close();
   }
 
   void open() {
-    if (this.socket.disconnected) {
-      this.socket.connect();
-    }
+    this.socket.open();
   }
 }

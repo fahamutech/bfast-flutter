@@ -25,7 +25,7 @@ class StorageController extends StorageAdapter {
       throw "file object to save required";
     }
     this.fileData = (file != null && file.data != null) ? file.data : null;
-    const postHeader = {};
+    var postHeader = <String,String>{};
     if (options != null && options.useMasterKey == true) {
       postHeader.addAll({
         'X-Parse-Master-Key': BFastConfig.getInstance()
@@ -44,15 +44,15 @@ class StorageController extends StorageAdapter {
     });
     var _source = StorageController.getSource(file.data.base64, file.fileType);
     Map dataToSave = {
-      "base64": _source.base64,
+      "base64": _source['base64'],
       "filename": file.fileName,
       "fileData": {
         "metadata": {},
         "tags": {},
       },
     };
-    if (_source.type != null) {
-      dataToSave["type"] = _source.type;
+    if (_source['type'] != null) {
+      dataToSave["type"] = _source['type'];
     }
     RestResponse response = await this._restAdapter.post(
         BFastConfig.getInstance().databaseURL(this._appName, '/storage'),

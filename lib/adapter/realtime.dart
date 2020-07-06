@@ -1,7 +1,7 @@
 abstract class RealtimeAdapter {
   void emit({dynamic auth, dynamic payload});
 
-  void listener(dynamic Function({dynamic auth, dynamic payload}) handler);
+  void listener(void Function(dynamic data) handler);
 
   void close();
   void open();

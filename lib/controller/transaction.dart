@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:bfast/adapter/rest.dart';
 import 'package:bfast/adapter/transaction.dart';
 import 'package:bfast/controller/rest.dart';
@@ -6,7 +8,7 @@ import 'package:bfast/model/transaction.dart';
 import '../configuration.dart';
 
 class TransactionController implements TransactionAdapter {
-  List<TransactionModel> transactionRequests;
+  List<TransactionModel> transactionRequests = [];
   bool _isNormalBatch;
   RestAdapter _restAdapter;
   String _appName;
@@ -38,10 +40,15 @@ class TransactionController implements TransactionAdapter {
         this.transactionRequests = result;
       }
     }
+
+    var requests = this.transactionRequests.map<Map>((value) {
+      return {"method": value.method, "path": value.path, "body": value.body};
+    }).toList();
+
     RestResponse response = await this._restAdapter.post(
         '${BFastConfig.getInstance().databaseURL(this._appName, '/batch')}',
         {
-          "requests": this.transactionRequests,
+          "requests": requests,
           "transaction": !this._isNormalBatch,
         },
         RestRequestConfig(
@@ -57,14 +64,15 @@ class TransactionController implements TransactionAdapter {
   }
 
   @override
-  TransactionAdapter create(String domainName, Map data) {
-    this.transactionRequests.add(TransactionModel(
+  TransactionAdapter create<T extends Map>(String domainName, T data) {
+    this.transactionRequests.add(TransactionModel<T>(
         body: data, method: "POST", path: '/classes/$domainName'));
     return this;
   }
 
   @override
-  TransactionAdapter createMany(String domainName, List<Map> data) {
+  TransactionAdapter createMany<T extends Map>(
+      String domainName, List<T> data) {
     List<TransactionModel> trans = data.map<TransactionModel>((payLoad) {
       return TransactionModel(
           body: payLoad, method: "POST", path: '/classes/$domainName');
@@ -74,7 +82,8 @@ class TransactionController implements TransactionAdapter {
   }
 
   @override
-  TransactionAdapter delete(String domainName, DeletePayload payload) {
+  TransactionAdapter delete<T extends Map>(
+      String domainName, DeletePayload<T> payload) {
     this.transactionRequests.add(TransactionModel(
         body: payload?.data != null ? payload.data : {},
         method: "DELETE",
@@ -83,19 +92,21 @@ class TransactionController implements TransactionAdapter {
   }
 
   @override
-  TransactionAdapter deleteMany(String domainName, List<DeletePayload> data) {
+  TransactionAdapter deleteMany<T extends Map>(
+      String domainName, List<DeletePayload<T>> data) {
     List<TransactionModel> trans = data.map<TransactionModel>((payLoad) {
       return TransactionModel(
           body: payLoad?.data != null ? payLoad.data : {},
           method: "DELETE",
           path: '/classes/$domainName/${payLoad.objectId}');
-    });
+    }).toList();
     this.transactionRequests.addAll(trans);
     return this;
   }
 
   @override
-  TransactionAdapter update(String domainName, UpdatePayLoad payLoad) {
+  TransactionAdapter update<T extends Map>(
+      String domainName, UpdatePayLoad<T> payLoad) {
     this.transactionRequests.add(TransactionModel(
         body: payLoad.data,
         method: "PUT",
@@ -104,13 +115,14 @@ class TransactionController implements TransactionAdapter {
   }
 
   @override
-  TransactionAdapter updateMany(String domainName, List<UpdatePayLoad> data) {
+  TransactionAdapter updateMany<T extends Map>(
+      String domainName, List<UpdatePayLoad<T>> data) {
     List<TransactionModel> trans = data.map<TransactionModel>((payLoad) {
       return TransactionModel(
           body: payLoad.data,
           method: "PUT",
           path: '/classes/$domainName/${payLoad.objectId}');
-    });
+    }).toList();
     this.transactionRequests.addAll(trans);
     return this;
   }

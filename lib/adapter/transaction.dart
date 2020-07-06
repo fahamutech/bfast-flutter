@@ -1,18 +1,18 @@
 import 'package:bfast/model/transaction.dart';
 
 abstract class TransactionAdapter {
-  TransactionAdapter create(String domainName, Map<dynamic, dynamic> data);
+  TransactionAdapter create<T extends Map>(String domainName, T data);
 
-  TransactionAdapter update(String domainName, UpdatePayLoad payLoad);
+  TransactionAdapter update<T extends Map>(String domainName, UpdatePayLoad<T> payLoad);
 
-  TransactionAdapter delete(String domainName, DeletePayload payload);
+  TransactionAdapter delete<T extends Map>(String domainName, DeletePayload<T> payload);
 
-  TransactionAdapter deleteMany(String domainName, List<DeletePayload> data);
+  TransactionAdapter deleteMany<T extends Map>(String domainName, List<DeletePayload<T>> data);
 
-  TransactionAdapter updateMany(String domainName, List<UpdatePayLoad> data);
+  TransactionAdapter updateMany<T extends Map>(String domainName, List<UpdatePayLoad<T>> data);
 
-  TransactionAdapter createMany(
-      String domainName, List<Map<dynamic, dynamic>> data);
+  TransactionAdapter createMany<T extends Map>(
+      String domainName, List<T> data);
 
   Future<dynamic> commit(
       {Future<List<TransactionModel>> Function(
@@ -22,21 +22,21 @@ abstract class TransactionAdapter {
       bool useMasterKey});
 }
 
-class UpdatePayLoad {
+class UpdatePayLoad<T> {
   String objectId;
-  Map data;
+  T data;
 
-  UpdatePayLoad(String objectId, [Map data]) {
+  UpdatePayLoad(String objectId, [T data]) {
     this.objectId = objectId;
     this.data = data;
   }
 }
 
-class DeletePayload {
+class DeletePayload<T> {
   String objectId;
-  Map data;
+  T data;
 
-  DeletePayload(String objectId, [Map data]) {
+  DeletePayload(String objectId, [T data]) {
     this.objectId = objectId;
     this.data = data;
   }
