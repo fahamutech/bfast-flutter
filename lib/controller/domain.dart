@@ -1,176 +1,95 @@
-import 'dart:convert';
+import 'package:bfast/adapter/cache.dart';
+import 'package:bfast/adapter/domain.dart';
+import 'package:bfast/adapter/query.dart';
+import 'package:bfast/adapter/rest.dart';
+import 'package:bfast/controller/query.dart';
+import 'package:bfast/controller/rest.dart';
+import 'package:bfast/model/QueryModel.dart';
 
-import 'package:bfast/configuration.dart';
-import 'package:bfast/core/domain.dart';
+import '../bfast_config.dart';
 
-class DomainController implements DomainI {
-  String _domainName;
-  Map<String, Object> _model = Map();
-  Config _config;
+class DomainController implements DomainAdapter {
+  String domainName;
+  CacheAdapter cacheAdapter;
+  RestAdapter restAdapter;
+  String appName;
 
-  DomainController(String domainName, Config config) {
-    this._domainName = domainName;
-    this._config = config;
+  DomainController(String domainName, CacheAdapter cacheAdapter,
+      RestAdapter restAdapter, String appName) {
+    this.appName = appName;
+    this.restAdapter = restAdapter;
+    this.domainName = domainName;
+    this.cacheAdapter = cacheAdapter;
   }
 
   @override
-  Future delete({String link, String id}) async {
-    var headers = this._config.getHeaders();
-    if (link != null) {
-      var results = await Config.client.delete(link, headers: headers);
-      if (results.statusCode.toString().startsWith('2')) {
-        return {"message": "Object deleted"};
-      } else {
-        throw Exception({"message": '${results.reasonPhrase}'});
-      }
-    } else if (id != null) {
-      var results = await Config.client.delete(
-          '${this._config.getApiUrl(this._domainName)}/$id',
-          headers: headers);
-      if (results.statusCode.toString().startsWith('2')) {
-        return {"message": "Object deleted"};
-      } else {
-        throw Exception({"message": '${results.reasonPhrase}'});
-      }
-    } else {
-      throw Exception({"message": "Please provide object id or link"});
+  Future<R> delete<R>(String objectId, [RequestOptions options]) async {
+    RestResponse response = await this.restAdapter.delete(
+        '${BFastConfig.getInstance().databaseURL(this.appName)}/classes/${this.domainName}/$objectId',
+        RestRequestConfig(
+            headers: (options != null && options.useMasterKey == true)
+                ? BFastConfig.getInstance().getMasterHeaders(this.appName)
+                : BFastConfig.getInstance().getHeaders(this.appName)));
+    return response.data;
+  }
+
+  @override
+  Future<T> get<T>(String objectId, [RequestOptions options]) async {
+    try {
+      return await this.query().get(objectId, options);
+    } catch (e) {
+      throw {"message": this._getErrorMessage(e)};
     }
   }
 
   @override
-  Future many({Map options}) async {
-    var headers = this._config.getHeaders();
-    var results = await Config.client.get(
-        this._config.getApiUrl(this._domainName,
-            params: options != null ? options : Map()),
-        headers: headers);
-    if (results.statusCode.toString().startsWith('2')) {
-      var resultObj = this._config.parseApiUrl(results.body);
-      return {
-        this._domainName: resultObj['_embedded'][this._domainName],
-        'links': resultObj['_links'],
-        'page': resultObj['page']
-      };
+  Future<List<T>> getAll<T>(
+      [Map<String, dynamic> pagination, RequestOptions options]) async {
+    var number = pagination != null
+        ? pagination['size']
+        : await this.query().count({}, options);
+    return await this.query().find(
+        QueryModel(
+            skip: pagination != null ? pagination["skip"] : 0, size: number),
+        options);
+  }
+
+  @override
+  QueryController<T> query<T>([RequestOptions options]) {
+    return QueryController(
+        this.domainName, this.cacheAdapter, this.restAdapter, this.appName);
+  }
+
+  @override
+  Future<R> save<T, R>(T model, [RequestOptions options]) async {
+    if (model != null) {
+      RestResponse response = await this.restAdapter.post(
+          '${BFastConfig.getInstance().databaseURL(this.appName)}/classes/${this.domainName}',
+          model,
+          RestRequestConfig(
+              headers: (options != null && options.useMasterKey == true)
+                  ? BFastConfig.getInstance().getMasterHeaders(this.appName)
+                  : BFastConfig.getInstance().getHeaders(this.appName)));
+      return response.data;
     } else {
-      throw Exception(results.body);
+      throw {"message": 'please provide data to save'};
     }
   }
 
   @override
-  Future navigate(String link) async {
-    var headers = this._config.getHeaders();
-    var results = await Config.client.get(link, headers: headers);
-    if (results.statusCode.toString().startsWith('2')) {
-      var resultObj = this._config.parseApiUrl(results.body);
-      return {
-        this._domainName: resultObj['_embedded'][this._domainName],
-        'links': resultObj['_links'] != null ? resultObj['_links'] : {},
-        'page': resultObj['page'] != null ? resultObj['page'] : {}
-      };
-    } else {
-      throw Exception(results.body);
-    }
+  Future<R> update<T, R>(String objectId, T data,
+      [RequestOptions options]) async {
+    var response = await this.restAdapter.put<T, dynamic>(
+        '${BFastConfig.getInstance().databaseURL(this.appName)}/classes/${this.domainName}/$objectId',
+        data,
+        RestRequestConfig(
+            headers: (options != null && options.useMasterKey == true)
+                ? BFastConfig.getInstance().getMasterHeaders(this.appName)
+                : BFastConfig.getInstance().getHeaders(this.appName)));
+    return response.data;
   }
 
-  @override
-  Future one({String link, String id}) async {
-    var headers = this._config.getHeaders();
-    if (link != null) {
-      var results = await Config.client.get(link, headers: headers);
-      if (results.statusCode.toString().startsWith('2')) {
-        var resultObj = this._config.parseApiUrl(results.body);
-        return {this._domainName: resultObj};
-      } else {
-        throw Exception({"message": '${results.reasonPhrase}'});
-      }
-    } else if (id != null) {
-      var results = await Config.client.get(
-          '${this._config.getApiUrl(this._domainName)}/$id',
-          headers: headers);
-      if (results.statusCode.toString().startsWith('2')) {
-        var resultObj = this._config.parseApiUrl(results.body);
-        return {this._domainName: resultObj};
-      } else {
-        throw Exception({"message": '${results.reasonPhrase}'});
-      }
-    } else {
-      throw Exception(
-          {"message": "Please provide ${this._domainName} objectId or link"});
-    }
-  }
-
-  @override
-  Future save() async {
-    var headers = this._config.getHeaders();
-    var results = await Config.client.post(
-        this._config.getApiUrl(this._domainName),
-        headers: headers,
-        body: jsonEncode(this._model));
-    this._model = Map();
-    if (results.statusCode.toString().startsWith('2')) {
-      return {"message": 'Object created', this._domainName: results.body};
-    } else {
-      throw Exception({"message": "Fails to create object"});
-    }
-  }
-
-  @override
-  Future search(String name, Map<String, Object> options) async {
-    var headers = this._config.getHeaders();
-    var results = await Config.client.get(
-        this._config.getSearchApi(this._domainName, name, params: options),
-        headers: headers);
-    if (results.statusCode.toString().startsWith('2')) {
-      var resultObj = this._config.parseApiUrl(results.body);
-      // print(resultObj);
-      return {
-        this._domainName: resultObj['_embedded']!=null?resultObj['_embedded'][this._domainName]:resultObj,
-        'links': resultObj['_links'] != null ? resultObj['_links'] : {},
-        'page': resultObj['page'] != null ? resultObj['page'] : {}
-      };
-    } else {
-      throw Exception(results.body);
-    }
-  }
-
-  @override
-  DomainController set(String name, Object value) {
-    this._model[name] = value;
-    return this;
-  }
-
-  @override
-  DomainController setValues(Map<String, Object> model) {
-    this._model = model;
-    return this;
-  }
-
-  @override
-  Future update({String link, String id}) async {
-    var headers = this._config.getHeaders();
-    if (link != null) {
-      var results = await Config.client
-          .patch(link, headers: headers, body: jsonEncode(this._model));
-      this._model = Map();
-      if (results.statusCode.toString().startsWith('2')) {
-        return {"message": "${this._domainName} object update"};
-      } else {
-        throw Exception({"message": '${results.reasonPhrase}'});
-      }
-    } else if (id != null) {
-      var results = await Config.client.patch(
-          '${this._config.getApiUrl(this._domainName)}/$id',
-          headers: headers,
-          body: jsonEncode(this._model));
-      this._model = Map();
-      if (results.statusCode.toString().startsWith('2')) {
-        return {"message": "${this._domainName} object update"};
-      } else {
-        throw Exception({"message": '${results.reasonPhrase}'});
-      }
-    } else {
-      throw Exception(
-          {"message": "Please provide ${this._domainName} objectId or link"});
-    }
+  String _getErrorMessage(dynamic err) {
+    return err.toString();
   }
 }
