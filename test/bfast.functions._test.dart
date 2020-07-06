@@ -1,5 +1,5 @@
 import 'package:bfast/bfast.dart';
-import 'package:bfast/configuration.dart';
+import 'package:bfast/bfast_config.dart';
 import 'package:bfast/controller/function.dart';
 import 'package:bfast/controller/rest.dart';
 import 'package:flutter_test/flutter_test.dart';

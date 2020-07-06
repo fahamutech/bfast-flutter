@@ -1,5 +1,5 @@
 import 'package:bfast/adapter/realtime.dart';
-import 'package:bfast/configuration.dart';
+import 'package:bfast/bfast_config.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
 class RealtimeController extends RealtimeAdapter {

@@ -6,7 +6,7 @@ import 'package:bfast/adapter/rest.dart';
 import 'package:bfast/controller/rest.dart';
 import 'package:bfast/model/QueryModel.dart';
 
-import '../configuration.dart';
+import '../bfast_config.dart';
 
 class QueryController<T> extends QueryAdapter<T> {
   String collectionName;

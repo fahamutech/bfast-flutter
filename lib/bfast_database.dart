@@ -5,7 +5,7 @@ import 'package:bfast/controller/domain.dart';
 import 'package:bfast/controller/rest.dart';
 import 'package:bfast/controller/transaction.dart';
 
-import 'configuration.dart';
+import 'bfast_config.dart';
 
 class BFastDatabase {
   String _appName;

@@ -6,7 +6,7 @@ import 'package:bfast/controller/query.dart';
 import 'package:bfast/controller/rest.dart';
 import 'package:bfast/model/QueryModel.dart';
 
-import '../configuration.dart';
+import '../bfast_config.dart';
 
 class DomainController implements DomainAdapter {
   String domainName;

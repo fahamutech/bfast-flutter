@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:bfast/bfast.dart';
-import 'package:bfast/configuration.dart';
+import 'package:bfast/bfast_config.dart';
 import 'package:bfast/controller/domain.dart';
 import 'package:bfast/controller/rest.dart';
 import 'package:bfast/model/QueryModel.dart';

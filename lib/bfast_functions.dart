@@ -1,6 +1,6 @@
 import 'package:bfast/adapter/function.dart';
 import 'package:bfast/adapter/realtime.dart';
-import 'package:bfast/configuration.dart';
+import 'package:bfast/bfast_config.dart';
 import 'package:bfast/controller/function.dart';
 import 'package:bfast/controller/realtime.dart';
 import 'package:bfast/controller/rest.dart';

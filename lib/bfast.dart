@@ -4,7 +4,7 @@ import 'package:bfast/adapter/auth.dart';
 import 'package:bfast/adapter/cache.dart';
 import 'package:bfast/adapter/storage.dart';
 import 'package:bfast/bfast_functions.dart';
-import 'package:bfast/configuration.dart';
+import 'package:bfast/bfast_config.dart';
 import 'package:bfast/controller/auth.dart';
 import 'package:bfast/controller/cache.dart';
 import 'package:bfast/controller/rest.dart';

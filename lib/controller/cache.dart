@@ -3,7 +3,7 @@ import 'package:bfast/adapter/query.dart';
 import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';
 
-import '../configuration.dart';
+import '../bfast_config.dart';
 
 class CacheController extends CacheAdapter {
   String _database;

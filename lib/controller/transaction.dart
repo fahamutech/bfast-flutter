@@ -1,11 +1,9 @@
-import 'dart:convert';
-
 import 'package:bfast/adapter/rest.dart';
 import 'package:bfast/adapter/transaction.dart';
 import 'package:bfast/controller/rest.dart';
 import 'package:bfast/model/transaction.dart';
 
-import '../configuration.dart';
+import '../bfast_config.dart';
 
 class TransactionController implements TransactionAdapter {
   List<TransactionModel> transactionRequests = [];
