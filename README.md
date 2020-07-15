@@ -1,6 +1,6 @@
 # BFast
 
-BFast client sdk for flutter. Always use latest version to stay up to date. Refer to [BFastProject](http://bfast.fahamutech.com/docs) for more documentation and learn more.
+BFast client sdk for flutter. Always use latest version to stay up to date.
 
 ## Get Started
 
@@ -16,7 +16,7 @@ After install sdk navigate to your main class and add the following code
 void main(){
     runapp(MyApp());
 
-    BFast().init(serverUrl: '<YOUR_BFAST_SERVER_URL>', apiKey: '<API_KEY>' ); // add this codes
+    BFast().init(AppCredential('applicationId','projectId',{})); // add this codes
 }
 
 // some other codes
