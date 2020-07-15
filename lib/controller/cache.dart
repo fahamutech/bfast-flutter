@@ -52,10 +52,11 @@ class CacheController extends CacheAdapter {
         options.cacheEnable is bool) {
       return options.cacheEnable == true;
     } else {
-      return BFastConfig.getInstance()
-              .getAppCredential(this._appName)
-              .cache
-              ?.enable ==
+      return BFastConfig
+          .getInstance()
+          .getAppCredential(this._appName)
+          .cache
+          ?.enable ==
           true;
     }
   }
@@ -73,8 +74,9 @@ class CacheController extends CacheAdapter {
   Future<T> get<T>(String identifier) async {
     await this.remove(identifier);
     DatabaseInstance databaseInstance = await this._getCacheDatabase();
-    return databaseInstance.store.record(identifier).get(databaseInstance.db)
-        as T;
+    var res = await databaseInstance.store.record(identifier).get(
+        databaseInstance.db);
+    return res as T;
   }
 
   @override
@@ -87,12 +89,15 @@ class CacheController extends CacheAdapter {
   Future<bool> remove(String identifier, [bool force]) async {
     DatabaseInstance ttlDatabaseInstance = await this._getTTLStore();
     DatabaseInstance databaseInstance = await this._getCacheDatabase();
-    int dayToLeave = ttlDatabaseInstance.store
+    var ttlRes = await ttlDatabaseInstance.store
         .record(identifier)
-        .get(ttlDatabaseInstance.db) as int;
+        .get(ttlDatabaseInstance.db);
+    int dayToLeave = ttlRes as int;
     if ((force != null && force) ||
         (dayToLeave != null &&
-            dayToLeave < DateTime.now().millisecondsSinceEpoch)) {
+            dayToLeave < DateTime
+                .now()
+                .millisecondsSinceEpoch)) {
       await databaseInstance.store
           .record(identifier)
           .delete(ttlDatabaseInstance.db);
