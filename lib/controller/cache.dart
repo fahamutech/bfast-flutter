@@ -2,7 +2,6 @@ import 'package:bfast/adapter/cache.dart';
 import 'package:bfast/adapter/query.dart';
 import 'package:sembast/sembast.dart';
 import 'package:sembast_sqflite/sembast_sqflite.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:sqflite/sqflite.dart' as sqflite;
 
 import '../bfast_config.dart';

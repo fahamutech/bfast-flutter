@@ -173,7 +173,7 @@ packages:
     source: hosted
     version: "3.0.13"
   sembast:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: sembast
       url: "https://pub.dartlang.org"
