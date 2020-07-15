@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:bfast/adapter/cache.dart';
 import 'package:bfast/adapter/query.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';
 
@@ -17,7 +20,9 @@ class CacheController extends CacheAdapter {
   }
 
   Future<DatabaseInstance> _getCacheDatabase() async {
-    String dbPath = '${this._database}.db';
+    Directory appDocDir = await getApplicationDocumentsDirectory();
+    String appDocPath = appDocDir.path;
+    String dbPath = '$appDocPath/${this._database}.db';
     DatabaseFactory dbFactory = databaseFactoryIo;
     Database db = await dbFactory.openDatabase(dbPath);
     StoreRef storeRef = stringMapStoreFactory.store(this._collection);
@@ -25,7 +30,9 @@ class CacheController extends CacheAdapter {
   }
 
   Future<DatabaseInstance> _getTTLStore() async {
-    String dbPath = '${this._database}_ttl_.db';
+    Directory appDocDir = await getApplicationDocumentsDirectory();
+    String appDocPath = appDocDir.path;
+    String dbPath = '$appDocPath/${this._database}_ttl_.db';
     DatabaseFactory dbFactory = databaseFactoryIo;
     Database db = await dbFactory.openDatabase(dbPath);
     // BFastConfig.getInstance().DEFAULT_CACHE_TTL_COLLECTION_NAME
