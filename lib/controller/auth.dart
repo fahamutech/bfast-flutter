@@ -1,6 +1,7 @@
 import 'package:bfast/adapter/auth.dart';
 import 'package:bfast/adapter/cache.dart';
 import 'package:bfast/adapter/rest.dart';
+import 'package:bfast/controller/rest.dart';
 
 import '../bfast_config.dart';
 
@@ -21,10 +22,10 @@ class AuthController extends AuthAdapter {
     var user = await this.currentUser();
     if (user != null && user['sessionToken'] != null) {
       var getHeaders = this._geHeadersWithToken(user, options);
-      var response = await this.restAdapter.get(
+      RestResponse response = await this.restAdapter.get(
           BFastConfig.getInstance().databaseURL(this.appName, '/users/me'),
           RestRequestConfig(headers: getHeaders));
-      return response;
+      return response.data;
     } else {
       return null;
     }
@@ -32,13 +33,17 @@ class AuthController extends AuthAdapter {
 
   @override
   Future currentUser() async {
-    return await this.cacheAdapter.get('_current_user_');
+    var user = await this.cacheAdapter.get('_current_user_');
+    if (user == '_empty_' || user == null) {
+      return null;
+    }
+    return user;
   }
 
   @override
   Future<String> getEmail() async {
     var user = await this.currentUser();
-    if (user!=null && user['email']!=null) {
+    if (user != null && user['email'] != null) {
       return user['email'];
     } else {
       return null;
@@ -48,7 +53,7 @@ class AuthController extends AuthAdapter {
   @override
   Future<String> getSessionToken() async {
     var user = await this.currentUser();
-    if (user!=null && user['sessionToken']!=null) {
+    if (user != null && user['sessionToken'] != null) {
       return user['sessionToken'];
     } else {
       return null;
@@ -58,7 +63,7 @@ class AuthController extends AuthAdapter {
   @override
   Future<String> getUsername() async {
     var user = await this.currentUser();
-    if (user!=null && user['username']!=null) {
+    if (user != null && user['username'] != null) {
       return user['username'];
     } else {
       return null;
@@ -79,7 +84,7 @@ class AuthController extends AuthAdapter {
       'X-Parse-Application-Id':
           BFastConfig.getInstance().getAppCredential(this.appName).applicationId
     });
-    var response = await this.restAdapter.get(
+    RestResponse response = await this.restAdapter.get(
         BFastConfig.getInstance().databaseURL(this.appName, '/login'),
         RestRequestConfig(
             params: {"username": username, "password": password},
@@ -91,12 +96,12 @@ class AuthController extends AuthAdapter {
   @override
   Future logOut([AuthOptions options]) async {
     var user = await this.currentUser();
-    await this.cacheAdapter.set('_current_user_', null);
+    await this.cacheAdapter.set('_current_user_', '_empty_');
     if (user != null && user['sessionToken'] != null) {
       var postHeader = this._geHeadersWithToken(user, options);
       this
           .restAdapter
-          .post(BFastConfig.getInstance().databaseURL(this.appName, '/logOut'),
+          .post(BFastConfig.getInstance().databaseURL(this.appName, '/logout'),
               {}, RestRequestConfig(headers: postHeader))
           .catchError((e) {});
     }
@@ -108,10 +113,10 @@ class AuthController extends AuthAdapter {
     var user = await this.currentUser();
     if (user != null && user['sessionToken'] != null) {
       var postHeader = this._geHeadersWithToken(user, options);
-      var response = await this.restAdapter.post(
+      RestResponse response = await this.restAdapter.post(
           BFastConfig.getInstance()
               .databaseURL(this.appName, '/requestPasswordReset'),
-          {email: user['email']!=null ? user['email'] : email},
+          {email: user['email'] != null ? user['email'] : email},
           RestRequestConfig(headers: postHeader));
       return response.data;
     } else {
@@ -121,7 +126,9 @@ class AuthController extends AuthAdapter {
 
   @override
   Future setCurrentUser(user) async {
-    await this.cacheAdapter.set('_current_user_', user, 30);
+    await this
+        .cacheAdapter
+        .set('_current_user_', user == null ? '_empty_' : user, 30);
     return user;
   }
 
@@ -144,11 +151,12 @@ class AuthController extends AuthAdapter {
     userData["username"] = username;
     userData["password"] = password;
     userData.addAll(attrs);
-    var response = await this.restAdapter.post(
+    RestResponse response = await this.restAdapter.post(
         BFastConfig.getInstance().databaseURL(this.appName, '/users'),
         userData,
         RestRequestConfig(headers: postHeaders));
     userData.remove('password');
+    // userData.remove('password');
     userData.addAll(response.data);
     await this.cacheAdapter.set('_current_user_', userData, 30);
     return userData;
@@ -159,7 +167,7 @@ class AuthController extends AuthAdapter {
     Map user = await this.currentUser();
     if (user != null && user["sessionToken"] != null) {
       var postHeaders = this._geHeadersWithToken(user, options);
-      var response = await this.restAdapter.put(
+      RestResponse response = await this.restAdapter.put(
           BFastConfig.getInstance()
               .databaseURL(this.appName, '/users/' + user['objectId']),
           userModel,
