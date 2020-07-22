@@ -98,9 +98,9 @@ class BFastConfig {
 
   String getCacheDatabaseName(String name, String appName) {
     if (name != null && name.isNotEmpty) {
-      return 'bfast/${this.getAppCredential(appName).projectId}/$appName/$name';
+      return '/bfast/${this.getAppCredential(appName).projectId}/$appName/$name';
     } else {
-      return 'bfast/${this.getAppCredential(appName).projectId}/$appName';
+      return '/bfast/${this.getAppCredential(appName).projectId}/$appName';
     }
   }
 
