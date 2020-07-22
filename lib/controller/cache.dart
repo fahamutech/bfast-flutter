@@ -1,8 +1,10 @@
 import 'package:bfast/adapter/cache.dart';
 import 'package:bfast/adapter/query.dart';
+import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
 import 'package:sembast/sembast.dart';
 import 'package:sembast_sqflite/sembast_sqflite.dart';
+import 'package:sembast_web/sembast_web.dart';
 import 'package:sqflite/sqflite.dart' as sqflite;
 
 import '../bfast_config.dart';
@@ -19,23 +21,37 @@ class CacheController extends CacheAdapter {
   }
 
   Future<DatabaseInstance> _getCacheDatabase() async {
-    var databaseFactory = getDatabaseFactorySqflite(sqflite.databaseFactory);
-//    Directory appDocDir = await getApplicationDocumentsDirectory();
-//    String appDocPath = appDocDir.path;
-    var databasePah = await sqflite.getDatabasesPath();
-    String dbPath = join(databasePah, '${this._database}.db');
-    var db = await databaseFactory.openDatabase(dbPath);
-    StoreRef storeRef = stringMapStoreFactory.store(this._collection);
-    return DatabaseInstance(db, storeRef);
+    if (kIsWeb) {
+      var databaseFactory = databaseFactoryWeb;
+      String dbPath = '${this._database}';
+      var db = await databaseFactory.openDatabase(dbPath);
+      StoreRef storeRef = stringMapStoreFactory.store(this._collection);
+      return DatabaseInstance(db, storeRef);
+    } else {
+      var databaseFactory = getDatabaseFactorySqflite(sqflite.databaseFactory);
+      var databasePah = await sqflite.getDatabasesPath();
+      String dbPath = join(databasePah, '${this._database}.db');
+      var db = await databaseFactory.openDatabase(dbPath);
+      StoreRef storeRef = stringMapStoreFactory.store(this._collection);
+      return DatabaseInstance(db, storeRef);
+    }
   }
 
   Future<DatabaseInstance> _getTTLStore() async {
-    var databaseFactory = getDatabaseFactorySqflite(sqflite.databaseFactory);
-    var databasePah = await sqflite.getDatabasesPath();
-    String dbPath = join(databasePah, '${this._database}_ttl_.db');
-    var db = await databaseFactory.openDatabase(dbPath);
-    StoreRef storeRef = stringMapStoreFactory.store(this._collection);
-    return DatabaseInstance(db, storeRef);
+    if (kIsWeb) {
+      var databaseFactory = databaseFactoryWeb;
+      String dbPath = '${this._database}_ttl_';
+      var db = await databaseFactory.openDatabase(dbPath);
+      StoreRef storeRef = stringMapStoreFactory.store(this._collection);
+      return DatabaseInstance(db, storeRef);
+    } else {
+      var databaseFactory = getDatabaseFactorySqflite(sqflite.databaseFactory);
+      var databasePah = await sqflite.getDatabasesPath();
+      String dbPath = join(databasePah, '${this._database}_ttl_.db');
+      var db = await databaseFactory.openDatabase(dbPath);
+      StoreRef storeRef = stringMapStoreFactory.store(this._collection);
+      return DatabaseInstance(db, storeRef);
+    }
   }
 
   static int _getDayToLeave(int days) {

@@ -74,6 +74,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.1.4"
+  idb_shim:
+    dependency: transitive
+    description:
+      name: idb_shim
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.11.1+1"
   intl:
     dependency: transitive
     description:
@@ -81,6 +88,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.16.1"
+  js:
+    dependency: transitive
+    description:
+      name: js
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.6.2"
   logging:
     dependency: transitive
     description:
@@ -186,6 +200,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.0"
+  sembast_web:
+    dependency: "direct main"
+    description:
+      name: sembast_web
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.2.0"
   sky_engine:
     dependency: transitive
     description: flutter
