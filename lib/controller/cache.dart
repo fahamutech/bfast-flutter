@@ -1,5 +1,6 @@
 import 'package:bfast/adapter/cache.dart';
 import 'package:bfast/adapter/query.dart';
+import 'package:path/path.dart';
 import 'package:sembast/sembast.dart';
 import 'package:sembast_sqflite/sembast_sqflite.dart';
 import 'package:sqflite/sqflite.dart' as sqflite;
@@ -21,8 +22,8 @@ class CacheController extends CacheAdapter {
     var databaseFactory = getDatabaseFactorySqflite(sqflite.databaseFactory);
 //    Directory appDocDir = await getApplicationDocumentsDirectory();
 //    String appDocPath = appDocDir.path;
-    String dbPath = '${this._database}.db';
-    // getDatabasesPath()
+    var databasePah = await sqflite.getDatabasesPath();
+    String dbPath = join(databasePah, '${this._database}.db');
     var db = await databaseFactory.openDatabase(dbPath);
     StoreRef storeRef = stringMapStoreFactory.store(this._collection);
     return DatabaseInstance(db, storeRef);
@@ -30,7 +31,8 @@ class CacheController extends CacheAdapter {
 
   Future<DatabaseInstance> _getTTLStore() async {
     var databaseFactory = getDatabaseFactorySqflite(sqflite.databaseFactory);
-    String dbPath = '${this._database}_ttl_.db';
+    var databasePah = await sqflite.getDatabasesPath();
+    String dbPath = join(databasePah, '${this._database}_ttl_.db');
     var db = await databaseFactory.openDatabase(dbPath);
     StoreRef storeRef = stringMapStoreFactory.store(this._collection);
     return DatabaseInstance(db, storeRef);
