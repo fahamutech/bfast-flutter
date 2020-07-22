@@ -1,10 +1,11 @@
-import 'dart:io';
-
 import 'package:bfast/adapter/cache.dart';
 import 'package:bfast/adapter/query.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:flutter/foundation.dart';
+import 'package:path/path.dart';
 import 'package:sembast/sembast.dart';
-import 'package:sembast/sembast_io.dart';
+import 'package:sembast_sqflite/sembast_sqflite.dart';
+import 'package:sembast_web/sembast_web.dart';
+import 'package:sqflite/sqflite.dart' as sqflite;
 
 import '../bfast_config.dart';
 
@@ -20,24 +21,37 @@ class CacheController extends CacheAdapter {
   }
 
   Future<DatabaseInstance> _getCacheDatabase() async {
-    Directory appDocDir = await getApplicationDocumentsDirectory();
-    String appDocPath = appDocDir.path;
-    String dbPath = '$appDocPath/${this._database}.db';
-    DatabaseFactory dbFactory = databaseFactoryIo;
-    Database db = await dbFactory.openDatabase(dbPath);
-    StoreRef storeRef = stringMapStoreFactory.store(this._collection);
-    return DatabaseInstance(db, storeRef);
+    if (kIsWeb) {
+      var databaseFactory = databaseFactoryWeb;
+      String dbPath = '${this._database}';
+      var db = await databaseFactory.openDatabase(dbPath);
+      StoreRef storeRef = stringMapStoreFactory.store(this._collection);
+      return DatabaseInstance(db, storeRef);
+    } else {
+      var databaseFactory = getDatabaseFactorySqflite(sqflite.databaseFactory);
+      var databasePah = await sqflite.getDatabasesPath();
+      String dbPath = join(databasePah, '${this._database}.db');
+      var db = await databaseFactory.openDatabase(dbPath);
+      StoreRef storeRef = stringMapStoreFactory.store(this._collection);
+      return DatabaseInstance(db, storeRef);
+    }
   }
 
   Future<DatabaseInstance> _getTTLStore() async {
-    Directory appDocDir = await getApplicationDocumentsDirectory();
-    String appDocPath = appDocDir.path;
-    String dbPath = '$appDocPath/${this._database}_ttl_.db';
-    DatabaseFactory dbFactory = databaseFactoryIo;
-    Database db = await dbFactory.openDatabase(dbPath);
-    // BFastConfig.getInstance().DEFAULT_CACHE_TTL_COLLECTION_NAME
-    StoreRef storeRef = stringMapStoreFactory.store(this._collection);
-    return DatabaseInstance(db, storeRef);
+    if (kIsWeb) {
+      var databaseFactory = databaseFactoryWeb;
+      String dbPath = '${this._database}_ttl_';
+      var db = await databaseFactory.openDatabase(dbPath);
+      StoreRef storeRef = stringMapStoreFactory.store(this._collection);
+      return DatabaseInstance(db, storeRef);
+    } else {
+      var databaseFactory = getDatabaseFactorySqflite(sqflite.databaseFactory);
+      var databasePah = await sqflite.getDatabasesPath();
+      String dbPath = join(databasePah, '${this._database}_ttl_.db');
+      var db = await databaseFactory.openDatabase(dbPath);
+      StoreRef storeRef = stringMapStoreFactory.store(this._collection);
+      return DatabaseInstance(db, storeRef);
+    }
   }
 
   static int _getDayToLeave(int days) {
@@ -52,11 +66,10 @@ class CacheController extends CacheAdapter {
         options.cacheEnable is bool) {
       return options.cacheEnable == true;
     } else {
-      return BFastConfig
-          .getInstance()
-          .getAppCredential(this._appName)
-          .cache
-          ?.enable ==
+      return BFastConfig.getInstance()
+              .getAppCredential(this._appName)
+              .cache
+              ?.enable ==
           true;
     }
   }
@@ -74,8 +87,9 @@ class CacheController extends CacheAdapter {
   Future<T> get<T>(String identifier) async {
     await this.remove(identifier);
     DatabaseInstance databaseInstance = await this._getCacheDatabase();
-    var res = await databaseInstance.store.record(identifier).get(
-        databaseInstance.db);
+    var res = await databaseInstance.store
+        .record(identifier)
+        .get(databaseInstance.db);
     return res as T;
   }
 
@@ -95,9 +109,7 @@ class CacheController extends CacheAdapter {
     int dayToLeave = ttlRes as int;
     if ((force != null && force) ||
         (dayToLeave != null &&
-            dayToLeave < DateTime
-                .now()
-                .millisecondsSinceEpoch)) {
+            dayToLeave < DateTime.now().millisecondsSinceEpoch)) {
       await databaseInstance.store
           .record(identifier)
           .delete(ttlDatabaseInstance.db);
@@ -129,10 +141,10 @@ class CacheController extends CacheAdapter {
 }
 
 class DatabaseInstance {
-  Database db;
+  var db;
   StoreRef store;
 
-  DatabaseInstance(Database db, StoreRef store) {
+  DatabaseInstance(var db, StoreRef store) {
     this.store = store;
     this.db = db;
   }

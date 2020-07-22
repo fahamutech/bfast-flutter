@@ -4,7 +4,7 @@ BFast client sdk for flutter. Always use latest version to stay up to date.
 
 ## Get Started
 
-Make sure you have your BFast project up and running. Login to your BFast project and create a client apiKey to be used with SDK.
+Make sure you have your BFast project up and running.
 
 ## Initiate Sdk
 
@@ -14,24 +14,19 @@ After install sdk navigate to your main class and add the following code
 // some codes and imports
 
 void main(){
-    runapp(MyApp());
 
-    BFast().init(AppCredential('applicationId','projectId',{})); // add this codes
+    BFast().init(AppCredential('your_app_id','your_project_id')); // add this codes
+
+    // rest of your codes
 }
 
 // some other codes
 
 ```
 
-NOTE
+## BFast Domain/Table/Collection
 
-* `<YOUR_BFAST_SERVER_URL>` This is a full hostname with port on which your BFast application is running for example `https://demo.bfast:8000`. Don't include `/` at the end f your serverUrl
-
-* `<API_KEY>` Api key as you define it to your project
-
-## BFast Domain
-
-This section handle data manipulation of BFast domains
+Manipulate your data in bfast::cloud database ( your project )
 
 ### Save data to your domain
 
