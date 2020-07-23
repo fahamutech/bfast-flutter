@@ -13,7 +13,7 @@ import 'package:bfast/controller/storage.dart';
 import 'bfast_database.dart';
 
 class BFast {
-  static int(AppCredentials options,
+  static init(AppCredentials options,
       [String appName = BFastConfig.DEFAULT_APP]) {
     options.cache = CacheConfigOptions(false);
     return BFastConfig.getInstance(options, appName).getAppCredential(appName);
