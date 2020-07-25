@@ -12,12 +12,16 @@ class RealtimeController extends RealtimeAdapter {
       {String appName = BFastConfig.DEFAULT_APP,
       void Function(dynamic e) onConnect,
       void Function(dynamic e) onDisconnect}) {
+    String path = eventName.length > 0 && eventName[0] == '/'
+        ? eventName
+        : '/' + eventName;
     this.socket = io(
-        BFastConfig.getInstance().functionsURL('/', appName), <String, dynamic>{
-      'transports': ['websocket'],
-      'autoConnect': false,
-      // 'extraHeaders': {'foo': 'bar'} // optional
-    });
+        BFastConfig.getInstance().functionsURL(path, appName),
+        <String, dynamic>{
+          'transports': ['websocket'],
+          'autoConnect': false,
+          // 'extraHeaders': {'foo': 'bar'} // optional
+        });
     this._appName = appName;
     this.eventName = eventName;
     if (onConnect != null) {
