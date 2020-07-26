@@ -1,5 +1,6 @@
 import 'package:bfast/adapter/realtime.dart';
 import 'package:bfast/bfast_config.dart';
+import 'package:flutter/foundation.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
 class RealtimeController extends RealtimeAdapter {
@@ -34,8 +35,8 @@ class RealtimeController extends RealtimeAdapter {
   }
 
   @override
-  void emit({dynamic auth, dynamic payload}) {
-    this.socket.emit(this.eventName, {"auth": auth, "payload": payload});
+  void emit({dynamic auth, @required dynamic body}) {
+    this.socket.emit(this.eventName, {"auth": auth, "body": body});
   }
 
   @override
