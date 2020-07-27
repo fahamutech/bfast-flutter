@@ -108,7 +108,7 @@ class CacheController extends CacheAdapter {
         .record(identifier)
         .get(ttlDatabaseInstance.db);
     int dayToLeave = ttlRes as int;
-    if ((force != null && force) ||
+    if ((force != null && force == true) ||
         (dayToLeave != null &&
             dayToLeave < DateTime.now().millisecondsSinceEpoch)) {
       await databaseInstance.store
