@@ -1,5 +1,6 @@
 import 'package:bfast/adapter/realtime.dart';
 import 'package:bfast/bfast_config.dart';
+import 'package:flutter/foundation.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
 class RealtimeController extends RealtimeAdapter {
@@ -12,12 +13,16 @@ class RealtimeController extends RealtimeAdapter {
       {String appName = BFastConfig.DEFAULT_APP,
       void Function(dynamic e) onConnect,
       void Function(dynamic e) onDisconnect}) {
+    String path = eventName.length > 0 && eventName[0] == '/'
+        ? eventName
+        : '/' + eventName;
     this.socket = io(
-        BFastConfig.getInstance().functionsURL('/', appName), <String, dynamic>{
-      'transports': ['websocket'],
-      'autoConnect': false,
-      // 'extraHeaders': {'foo': 'bar'} // optional
-    });
+        BFastConfig.getInstance().functionsURL(path, appName),
+        <String, dynamic>{
+          'transports': ['websocket'],
+          'autoConnect': false,
+          // 'extraHeaders': {'foo': 'bar'} // optional
+        });
     this._appName = appName;
     this.eventName = eventName;
     if (onConnect != null) {
@@ -30,8 +35,8 @@ class RealtimeController extends RealtimeAdapter {
   }
 
   @override
-  void emit({dynamic auth, dynamic payload}) {
-    this.socket.emit(this.eventName, {"auth": auth, "payload": payload});
+  void emit({dynamic auth, @required dynamic body}) {
+    this.socket.emit(this.eventName, {"auth": auth, "body": body});
   }
 
   @override

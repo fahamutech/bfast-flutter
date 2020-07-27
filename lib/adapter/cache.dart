@@ -5,7 +5,7 @@ abstract class CacheAdapter {
 
   Future<T> get<T>(String identifier);
 
-  Future<List<String>> keys();
+  Future<List<K>> keys<K>();
 
   Future<bool> clearAll();
 

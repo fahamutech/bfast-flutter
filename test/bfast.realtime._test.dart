@@ -13,7 +13,7 @@ class MockHttpClient extends Mock implements http.Client {
 }
 
 void main() {
-  BFast.int(AppCredentials("smartstock_lb", "smartstock"));
+  BFast.init(AppCredentials("smartstock_lb", "smartstock"));
   MockHttpClient mockHttpClient = MockHttpClient();
 
   group("BFast realtime", () {

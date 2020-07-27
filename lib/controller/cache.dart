@@ -94,9 +94,10 @@ class CacheController extends CacheAdapter {
   }
 
   @override
-  Future<List<String>> keys() async {
+  Future<List<K>> keys<K>() async {
     DatabaseInstance databaseInstance = await this._getCacheDatabase();
-    return await databaseInstance.store.findKeys(databaseInstance.db);
+    var keys = await databaseInstance.store.findKeys(databaseInstance.db);
+    return keys as List<K>;
   }
 
   @override
@@ -107,7 +108,7 @@ class CacheController extends CacheAdapter {
         .record(identifier)
         .get(ttlDatabaseInstance.db);
     int dayToLeave = ttlRes as int;
-    if ((force != null && force) ||
+    if ((force != null && force == true) ||
         (dayToLeave != null &&
             dayToLeave < DateTime.now().millisecondsSinceEpoch)) {
       await databaseInstance.store
