@@ -24,8 +24,8 @@ class CacheMockController extends CacheAdapter {
   }
 
   @override
-  Future<List<String>> keys() async {
-    return ['key1', 'key2'];
+  Future<List<String>> keys<String>() async {
+    return [];
   }
 
   @override
