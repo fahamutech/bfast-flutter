@@ -114,9 +114,9 @@ class CacheController extends CacheAdapter {
       await databaseInstance.store
           .record(identifier)
           .delete(ttlDatabaseInstance.db);
-      await ttlDatabaseInstance.store
+      await databaseInstance.store
           .record(identifier)
-          .delete(ttlDatabaseInstance.db);
+          .delete(databaseInstance.db);
       return true;
     } else {
       return false;
