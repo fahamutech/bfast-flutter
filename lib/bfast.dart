@@ -19,8 +19,9 @@ class BFast {
     return BFastConfig.getInstance(options, appName).getAppCredential(appName);
   }
 
-  static BFastConfig getConfig() {
-    return BFastConfig.getInstance();
+  static BFastConfig getConfig(
+      [String appName = BFastConfig.DEFAULT_APP,AppCredentials config]) {
+    return BFastConfig.getInstance(config,appName);
   }
 
   static const utils = {"USER_DOMAIN_NAME": '_User'};

@@ -122,20 +122,13 @@ class AppCredentials {
   CacheConfigOptions cache;
 
   AppCredentials(
-    String applicationId,
-    String projectId, {
-    String functionsURL,
-    String databaseURL,
-    String appPassword,
-    CacheConfigOptions cache,
-  }) {
-    this.applicationId = applicationId;
-    this.projectId = projectId;
-    this.functionsURL = functionsURL;
-    this.databaseURL = databaseURL;
-    this.appPassword = appPassword;
-    this.cache = cache;
-  }
+    this.applicationId,
+    this.projectId, {
+    this.functionsURL,
+    this.databaseURL,
+    this.appPassword,
+    this.cache,
+  });
 }
 
 class CacheConfigOptions {
@@ -143,9 +136,5 @@ class CacheConfigOptions {
   String collection;
   String ttlCollection;
 
-  CacheConfigOptions(bool enable, {String collection, String ttlCollection}) {
-    this.enable = enable;
-    this.collection = collection;
-    this.ttlCollection = ttlCollection;
-  }
+  CacheConfigOptions(this.enable, {this.collection, this.ttlCollection});
 }

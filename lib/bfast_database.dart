@@ -1,7 +1,7 @@
 import 'package:bfast/adapter/domain.dart';
 import 'package:bfast/adapter/transaction.dart';
 import 'package:bfast/controller/cache.dart';
-import 'package:bfast/controller/domain.dart';
+import 'package:bfast/controller/database.dart';
 import 'package:bfast/controller/rest.dart';
 import 'package:bfast/controller/transaction.dart';
 
@@ -15,7 +15,7 @@ class BFastDatabase {
   }
 
   DomainAdapter domain(String domainName) {
-    return DomainController(
+    return DatabaseController(
         domainName,
         CacheController(
           this._appName,

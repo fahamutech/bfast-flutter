@@ -2,20 +2,17 @@
 
 BFast client sdk for flutter. Always use latest version to stay up to date.
 
-## Get Started
-
-Make sure you have your BFast project up and running.
 
 ## Initiate Sdk
 
 After install sdk navigate to your main class and add the following code
 
-``` Dart
+``` dart
 // some codes and imports
 
 void main(){
 
-    BFast().init(AppCredential('your_app_id','your_project_id')); // add this codes
+    BFast.init(AppCredential('your_app_id','your_project_id'));
 
     // rest of your codes
 }
@@ -24,61 +21,66 @@ void main(){
 
 ```
 
-## BFast Domain/Table/Collection
+AppCredential interface is as follows
 
-Manipulate your data in bfast::cloud database ( your project )
+```dart
+class AppCredentials {
+  String applicationId; // applicationId from bfast::cloud project if you have one
+  String projectId; // projectId from bfast::cloud project if you have one
+  String functionsURL; // a custom bfast::function instance url of where you deploy it
+  String databaseURL; // a custom bfast::database instance url of where you deploy it
+  String appPassword; // materKey from bfast::cloud or from your bfast::database instance when you initialize it.
+  CacheConfigOptions cache; // offline strorage configuration for your app
 
-### Save data to your domain
+  AppCredentials(
+    String applicationId,
+    String projectId, {
+    String functionsURL,
+    String databaseURL,
+    String appPassword,
+    CacheConfigOptions cache,
+  });
+}
 
-Domain is a schema or model you define to your BFast project, once build and deploy you can save data through various ways as follow
+class CacheConfigOptions {
+  bool enable; // global enable of cache, default is false
+  String collection; // global collection/table to store data
+  String ttlCollection; // global collection/table to store data time to leave information
 
-```Dart
-var product = BFast().domain('products');
-product
-    .set('name', 'XPS 13')
-    .set('price', 1000)
-    .save()
-    .then((value){
-        // product added
-    }).catch((reason){
-        // handle errors
-    });
+  CacheConfigOptions(bool enable, {String collection, String ttlCollection}) {
+    this.enable = enable;
+    this.collection = collection;
+    this.ttlCollection = ttlCollection;
+  }
+}
+
+
 ```
 
-Or you can do this way
+## Database
 
-```Dart
-var product = BFast().domain('products');
-product.set('name', 'XPS 13');
-product.set('price', 1000);
-product.save().then((value){
-    // product added
-}).catch((reason){
-    // handle errors
-});
-```
+Manipulate your data in bfast::database instance by using `BFast.database()` API.
 
-Or you can do like this
+### Save Data
 
-```Dart
-var product = BFast().domain('products');
-product.setValues({
+This is a collection or table you use to save your data. If not exist in database will be created 
+automatically for you.
+
+
+```dart
+var product = BFast.database().table('products');
+product.save({
     'name': 'XPS 13',
     'price': 1000
-}).save().then((value){
+}).then((value){
     // product added
-}).catch((reason){
+}).catchError((reason){
     // handle errors
 });
 ```
 
-Response of a save method will be an object like
 
-```json
-{message: "<RESPONSE_MESSAGE>"}
-```
-
-### Get many domain in pagination
+### Query
 
 You can retrive domains from your bfast project as follow.
 

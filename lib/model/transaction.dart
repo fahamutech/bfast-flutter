@@ -1,13 +1,9 @@
-class TransactionModel<T> {
-  String method;
-  String path;
-  T body;
+class TransactionModel<T extends dynamic> {
+  TransactionAction action;
+  String domain;
+  T data;
 
-  TransactionModel({String path, String method,  T body}) {
-    this.method = method;
-    this.path = path;
-    this.body = body;
-  }
+  TransactionModel({this.data, this.action, this.domain});
 }
 
-enum TransactionHttpMethod { POST, PUT, DELETE }
+enum TransactionAction { CREATE, UPDATE, DELETE, QUERY }

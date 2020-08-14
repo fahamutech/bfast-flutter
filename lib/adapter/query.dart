@@ -60,8 +60,10 @@ class AggregationOptions {
 
 class RequestOptions extends CacheOptions {
   bool useMasterKey;
+  List<String> returnFields;
 
-  RequestOptions([bool userMasterKey]) {
+  RequestOptions([bool userMasterKey, List<String> returnFields]) {
     this.useMasterKey = userMasterKey;
+    this.returnFields = returnFields;
   }
 }

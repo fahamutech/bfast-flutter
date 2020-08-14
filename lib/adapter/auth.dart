@@ -9,6 +9,8 @@ abstract class AuthAdapter<T> {
 
   Future<String> getSessionToken();
 
+  Future<String> getToken();
+
   Future<T> currentUser();
 
   Future<T> setCurrentUser(T user);

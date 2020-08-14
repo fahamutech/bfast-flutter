@@ -3,23 +3,26 @@ import 'package:bfast/adapter/domain.dart';
 import 'package:bfast/adapter/query.dart';
 import 'package:bfast/adapter/rest.dart';
 import 'package:bfast/controller/query.dart';
+import 'package:bfast/controller/realtime.dart';
 import 'package:bfast/controller/rest.dart';
 import 'package:bfast/model/QueryModel.dart';
+import 'package:bfast/model/RealTimeResponse.dart';
 
 import '../bfast_config.dart';
 
-class DomainController implements DomainAdapter {
+class DatabaseController implements DomainAdapter {
   String domainName;
   CacheAdapter cacheAdapter;
   RestAdapter restAdapter;
   String appName;
 
-  DomainController(String domainName, CacheAdapter cacheAdapter,
+  DatabaseController(String domainName, CacheAdapter cacheAdapter,
       RestAdapter restAdapter, String appName) {
-    this.appName = appName;
-    this.restAdapter = restAdapter;
     this.domainName = domainName;
-    this.cacheAdapter = cacheAdapter;
+    this.restAdapter = restAdapter;
+    private readonly authAdapter: AuthAdapter;
+    private readonly rulesController: RulesController;
+    this.appName = appName;
   }
 
   @override
@@ -36,9 +39,9 @@ class DomainController implements DomainAdapter {
   @override
   Future<T> get<T>(String objectId, [RequestOptions options]) async {
     try {
-      return await this.query().get(objectId, options);
+      return await this.query().byId(objectId).find(options);
     } catch (e) {
-      throw {"message": this._getErrorMessage(e)};
+      throw {"message": DatabaseController._getErrorMessage(e)};
     }
   }
 
@@ -47,17 +50,17 @@ class DomainController implements DomainAdapter {
       [Map<String, dynamic> pagination, RequestOptions options]) async {
     var number = pagination != null
         ? pagination['size']
-        : await this.query().count({}, options);
-    return await this.query().find(
-        QueryModel(
-            skip: pagination != null ? pagination["skip"] : 0, size: number),
-        options);
+        : await this.query().count().find(options);
+    return this.query()
+        .skip(pagination != null ? pagination["skip"] : 0)
+        .size(number)
+        .find(options);
   }
 
   @override
-  QueryController<T> query<T>([RequestOptions options]) {
+  QueryController query<T>([RequestOptions options]) {
     return QueryController(
-        this.domainName, this.cacheAdapter, this.restAdapter, this.appName);
+        this.domainName, this.restAdapter,this.rulesController,  this.appName);
   }
 
   @override
@@ -89,7 +92,40 @@ class DomainController implements DomainAdapter {
     return response.data;
   }
 
-  String _getErrorMessage(dynamic err) {
-    return err.toString();
+  static _extractResultFromServer(dynamic data, String rule,String domain) {
+  if (data!=null && data['$rule$domain'] !=null) {
+  return data['$rule$domain'];
+  } else {
+  if (data !=null && data['errors'] !=null && data['errors']['$rule'] !=null&& data['errors']['$rule'][domain] !=null) {
+  throw data['errors']['$rule']['$domain'];
+  } else {
+  throw {"message": 'Server general failure', "errors": data['errors']};
+  }
+  }
+  }
+
+  static dynamic _getErrorMessage(dynamic e) {
+  if (e['message'] !=null) {
+  return e['message'];
+  } else {
+  return (e !=null && e['response'] !=null && e['response']['data']!=null) ? e['response']['data'] : e['toString']();
+  }
+  }
+}
+
+class DatabaseChangesController {
+  RealtimeController socketController;
+  DatabaseChangesController(this.socketController);
+
+  addListener(dynamic Function(dynamic response) handler) {
+  this.socketController.listener(handler);
+  }
+
+  close() {
+    this.socketController.close();
+  }
+
+  open() {
+    this.socketController.open();
   }
 }

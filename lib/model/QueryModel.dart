@@ -1,23 +1,26 @@
-class QueryModel{
+import 'package:bfast/model/UpdateModel.dart';
+
+class QueryModel {
   int skip;
   int size;
-  List<String> orderBy;
+  List<Map<String, int>> orderBy;
   Map<dynamic, dynamic> filter;
-  List<String> keys;
-//  String id;
-  QueryModel({
-    int skip,
-    int size,
-    List<String> orderBy,
-    Map<dynamic, dynamic> filter,
-    List<String> keys
-//    String id,
-}){
-    this.size = size;
-    this.skip = skip;
-    this.orderBy = orderBy;
-    this.filter = filter;
-    this.keys = keys;
-   // this.id = id;
-}
+  List<String> returnFields;
+  bool count;
+  int last;
+  int first;
+  String id;
+  UpdateModel update;
+
+  QueryModel(
+      {this.update,
+      this.returnFields,
+      this.last,
+      this.first,
+      this.count,
+      this.size,
+      this.id,
+      this.filter,
+      this.orderBy,
+      this.skip});
 }

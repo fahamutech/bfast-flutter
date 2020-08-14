@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:bfast/bfast.dart';
 import 'package:bfast/bfast_config.dart';
-import 'package:bfast/controller/domain.dart';
+import 'package:bfast/controller/database.dart';
 import 'package:bfast/controller/rest.dart';
 import 'package:bfast/model/QueryModel.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -21,7 +21,7 @@ class MockHttpClient extends Mock implements http.Client {
 void main() {
   BFast.init(AppCredentials("smartstock_lb", "smartstock"));
   MockHttpClient mockHttpClient = MockHttpClient();
-  DomainController domainController = DomainController(
+  DatabaseController domainController = DatabaseController(
       'test',
       CacheMockController({"name": "John"}),
       BFastHttpClientController(httpClient: mockHttpClient),

@@ -50,11 +50,22 @@ class AuthController extends AuthAdapter {
     }
   }
 
+  @deprecated
   @override
   Future<String> getSessionToken() async {
     var user = await this.currentUser();
     if (user != null && user['sessionToken'] != null) {
       return user['sessionToken'];
+    } else {
+      return null;
+    }
+  }
+
+  @override
+  Future<String> getToken() async {
+    var user = await this.currentUser();
+    if (user != null && user['token'] != null) {
+      return user['token'];
     } else {
       return null;
     }

@@ -7,23 +7,22 @@ class RealtimeController extends RealtimeAdapter {
   Socket socket;
 
   String eventName;
-  String _appName;
 
   RealtimeController(String eventName,
-      {String appName = BFastConfig.DEFAULT_APP,
+      {appName = BFastConfig.DEFAULT_APP,
       void Function(dynamic e) onConnect,
       void Function(dynamic e) onDisconnect}) {
     String path = eventName.length > 0 && eventName[0] == '/'
         ? eventName
         : '/' + eventName;
-    this.socket = io(
-        BFastConfig.getInstance().functionsURL(path, appName),
-        <String, dynamic>{
-          'transports': ['websocket'],
-          'autoConnect': false,
-          // 'extraHeaders': {'foo': 'bar'} // optional
-        });
-    this._appName = appName;
+    var url = path == '/__changes__'
+        ? BFastConfig.getInstance().databaseURL(appName, path)
+        : BFastConfig.getInstance().functionsURL(path, appName);
+    this.socket = io(url, <String, dynamic>{
+      'transports': ['websocket'],
+      'autoConnect': false,
+      // 'extraHeaders': {'foo': 'bar'} // optional
+    });
     this.eventName = eventName;
     if (onConnect != null) {
       this.socket.on("connect", (data) => onConnect(data));
@@ -40,15 +39,19 @@ class RealtimeController extends RealtimeAdapter {
   }
 
   @override
-  void listener(void Function(dynamic data) handler) {
+  void listener(dynamic Function(dynamic response) handler) {
     this.socket.on(this.eventName, (data) => handler(data));
   }
 
   void close() {
-    this.socket.close();
+    if (this.socket.connected == true) {
+      this.socket.close();
+    }
   }
 
   void open() {
-    this.socket.open();
+    if (this.socket.disconnected == true) {
+      this.socket.open();
+    }
   }
 }
