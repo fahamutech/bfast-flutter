@@ -143,7 +143,7 @@ class RulesController {
   }
 
   Future storage(
-      TransactionAction action, dynamic payload, AppCredentials appCredentials,
+      String action, dynamic payload, AppCredentials appCredentials,
       [RequestOptions options]) async {
     const storageRule = {};
     if (options != null && options.useMasterKey == true) {

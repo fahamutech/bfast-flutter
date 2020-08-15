@@ -23,19 +23,16 @@ class RestRequestConfig {
   String url;
   String method;
   String baseURL;
+  Function uploadProgress;
   Map<String, String> headers;
   Map<String, dynamic> params;
 
-  RestRequestConfig(
-  {String url,
-      String method,
-      String baseURL,
-      Map<String, String> headers,
-      Map<String, dynamic> params}) {
-    this.url = url;
-    this.method = method;
-    this.baseURL = baseURL;
-    this.headers = headers;
-    this.params = params;
-  }
+  RestRequestConfig({
+    this.headers,
+    this.baseURL,
+    this.method,
+    this.params,
+    this.uploadProgress,
+    this.url,
+  });
 }

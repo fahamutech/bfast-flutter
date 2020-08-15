@@ -20,7 +20,7 @@ class BFastHttpClientController extends RestAdapter {
     var response = await this._httpClient.delete(
         this._encodeUrlQueryParams(url, config?.params),
         headers: config?.headers);
-    if (response.statusCode.toString().startsWith('20')) {
+    if (response.statusCode.toString().startsWith('20')==true) {
       return RestResponse(
           data: response.body.startsWith('{')
               ? jsonDecode(response.body)
@@ -40,7 +40,7 @@ class BFastHttpClientController extends RestAdapter {
     var response = await this._httpClient.get(
         this._encodeUrlQueryParams(url, config?.params),
         headers: config?.headers);
-    if (response.statusCode.toString().startsWith('20')) {
+    if (response.statusCode.toString().startsWith('20')==true) {
       return RestResponse(
           data: response.body.startsWith('{')
               ? jsonDecode(response.body)
@@ -72,7 +72,7 @@ class BFastHttpClientController extends RestAdapter {
     var response = await this._httpClient.head(
         this._encodeUrlQueryParams(url, config?.params),
         headers: config?.headers);
-    if (response.statusCode.toString().startsWith('20')) {
+    if (response.statusCode.toString().startsWith('20')==true) {
       return RestResponse(
           data: response.body.startsWith('{')
               ? jsonDecode(response.body)
@@ -92,7 +92,7 @@ class BFastHttpClientController extends RestAdapter {
     var response = await this._httpClient.head(
         this._encodeUrlQueryParams(url, config?.params),
         headers: config?.headers);
-    if (response.statusCode.toString().startsWith('20')) {
+    if (response.statusCode.toString().startsWith('20')==true) {
       return RestResponse(
           data: response.body.startsWith('{')
               ? jsonDecode(response.body)
@@ -113,7 +113,7 @@ class BFastHttpClientController extends RestAdapter {
         this._encodeUrlQueryParams(url, config?.params),
         body: data,
         headers: config?.headers);
-    if (response.statusCode.toString().startsWith('20')) {
+    if (response.statusCode.toString().startsWith('20')==true) {
       return RestResponse(
           data: response.body.startsWith('{')
               ? jsonDecode(response.body)
@@ -134,7 +134,7 @@ class BFastHttpClientController extends RestAdapter {
         this._encodeUrlQueryParams(url, config?.params),
         body: (data != null && data is Map) ? jsonEncode(data) : data,
         headers: config?.headers);
-    if (response.statusCode.toString().startsWith('20')) {
+    if (response.statusCode.toString().startsWith('20')==true) {
       return RestResponse(
           data: response.body.startsWith('{')
               ? jsonDecode(response.body)
@@ -155,7 +155,7 @@ class BFastHttpClientController extends RestAdapter {
         this._encodeUrlQueryParams(url, config?.params),
         body: jsonEncode(data),
         headers: config?.headers);
-    if (response.statusCode.toString().startsWith('20')) {
+    if (response.statusCode.toString().startsWith('20')==true) {
       return RestResponse(
           data: response.body.startsWith('{')
               ? jsonDecode(response.body)

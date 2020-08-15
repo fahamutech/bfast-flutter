@@ -70,11 +70,11 @@ class BFastConfig {
   }
 
   String functionsURL(String path, String appName) {
-    if (path.startsWith('http')) {
+    if (path.startsWith('http') == true) {
       return path;
     }
     if (this.credentials[appName].functionsURL != null &&
-        this.credentials[appName].functionsURL.startsWith('http')) {
+        this.credentials[appName].functionsURL.startsWith('http')==true) {
       return this.credentials[appName].functionsURL + path;
     }
     return 'https://${this.credentials[appName].projectId}-faas.bfast.fahamutech.com$path';
@@ -82,7 +82,7 @@ class BFastConfig {
 
   String databaseURL(String appName, [String suffix]) {
     if (this.credentials[appName].databaseURL != null &&
-        this.credentials[appName].databaseURL.startsWith('http')) {
+        this.credentials[appName].databaseURL.startsWith('http')==true) {
       if (suffix != null) {
         return this.credentials[appName].databaseURL + suffix;
       } else {
@@ -97,7 +97,7 @@ class BFastConfig {
   }
 
   String getCacheDatabaseName(String name, String appName) {
-    if (name != null && name.isNotEmpty) {
+    if (name != null && name.isNotEmpty == true) {
       return 'bfast/${this.getAppCredential(appName).projectId}/$appName/$name';
     } else {
       return 'bfast/${this.getAppCredential(appName).projectId}/$appName';

@@ -21,7 +21,7 @@ class CacheController extends CacheAdapter {
   }
 
   Future<DatabaseInstance> _getCacheDatabase() async {
-    if (kIsWeb) {
+    if (kIsWeb == true) {
       var databaseFactory = databaseFactoryWeb;
       String dbPath = '${this._database}';
       var db = await databaseFactory.openDatabase(dbPath);
@@ -38,7 +38,7 @@ class CacheController extends CacheAdapter {
   }
 
   Future<DatabaseInstance> _getTTLStore() async {
-    if (kIsWeb) {
+    if (kIsWeb==true) {
       var databaseFactory = databaseFactoryWeb;
       String dbPath = '${this._database}_ttl_';
       var db = await databaseFactory.openDatabase(dbPath);

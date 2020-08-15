@@ -1,10 +1,5 @@
 import 'package:bfast/adapter/auth.dart';
 
-abstract class StorageAdapter {
-  dynamic getData();
-
-  Future<SaveFileResponse> save(BFastFile file, [FileOptions options]);
-}
 
 class BFastFile {
   String fileName;
