@@ -177,7 +177,7 @@ class QueryController {
 
   DatabaseChangesController changes(
       [Function onConnect, Function onDisconnect]) {
-    var socketController = new RealtimeController('/__changes__',
+    var socketController = new SocketController('/__changes__',
         appName: this.appName,
         onConnect: onConnect,
         onDisconnect: onDisconnect);

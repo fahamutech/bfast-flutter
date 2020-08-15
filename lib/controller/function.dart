@@ -1,11 +1,10 @@
 import 'dart:async';
 
-import 'package:bfast/adapter/function.dart';
 import 'package:bfast/adapter/rest.dart';
 import 'package:bfast/bfast_config.dart';
 import 'package:bfast/controller/rest.dart';
 
-class FunctionController<T> implements FunctionAdapter<T> {
+class FunctionController<T> {
   String functionPath;
   String appName;
   RestAdapter restAdapter;

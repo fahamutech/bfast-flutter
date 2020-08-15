@@ -1,4 +1,7 @@
+import 'dart:typed_data';
+
 import 'package:bfast/controller/rest.dart';
+import 'package:http/http.dart' as http;
 
 abstract class RestAdapter {
   Future<RestResponse<R>> get<T, R>(String url, [RestRequestConfig config]);
@@ -11,6 +14,9 @@ abstract class RestAdapter {
 
   Future<RestResponse<R>> post<T, R>(String url,
       [T data, RestRequestConfig config]);
+
+  Future<RestResponse> multiPartRequest(String url, ByteBuffer data,
+      {http.MultipartRequest multipartRequest,RestRequestConfig config});
 
   Future<RestResponse<R>> put<T, R>(String url,
       [T data, RestRequestConfig config]);

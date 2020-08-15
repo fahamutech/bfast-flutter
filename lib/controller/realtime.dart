@@ -1,14 +1,13 @@
-import 'package:bfast/adapter/realtime.dart';
 import 'package:bfast/bfast_config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
-class RealtimeController extends RealtimeAdapter {
+class SocketController {
   Socket socket;
 
   String eventName;
 
-  RealtimeController(String eventName,
+  SocketController(String eventName,
       {appName = BFastConfig.DEFAULT_APP,
       void Function(dynamic e) onConnect,
       void Function(dynamic e) onDisconnect}) {

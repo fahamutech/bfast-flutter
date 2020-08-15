@@ -19,16 +19,7 @@ class AuthController extends AuthAdapter {
 
   @override
   Future authenticated([AuthOptions options]) async {
-    var user = await this.currentUser();
-    if (user != null && user['sessionToken'] != null) {
-      var getHeaders = this._geHeadersWithToken(user, options);
-      RestResponse response = await this.restAdapter.get(
-          BFastConfig.getInstance().databaseURL(this.appName, '/users/me'),
-          RestRequestConfig(headers: getHeaders));
-      return response.data;
-    } else {
-      return null;
-    }
+    return this.currentUser();
   }
 
   @override
@@ -83,55 +74,68 @@ class AuthController extends AuthAdapter {
 
   @override
   Future logIn(String username, String password, [AuthOptions options]) async {
-    var getHeader = <String, String>{};
-    if (options != null && options.useMasterKey == true) {
-      getHeader.addAll({
-        'X-Parse-Master-Key': BFastConfig.getInstance()
-            .getAppCredential(this.appName)
-            .appPassword,
-      });
-    }
-    getHeader.addAll({
-      'X-Parse-Application-Id':
+    const authRule = {};
+    authRule.addAll({
+      'applicationId':
           BFastConfig.getInstance().getAppCredential(this.appName).applicationId
     });
-    RestResponse response = await this.restAdapter.get(
-        BFastConfig.getInstance().databaseURL(this.appName, '/login'),
-        RestRequestConfig(
-            params: {"username": username, "password": password},
-            headers: getHeader));
-    await this.cacheAdapter.set('_current_user_', response.data, 30);
-    return response.data;
+    authRule.addAll({
+      "auth": {
+        "signIn": {"username": username, "password": password}
+      }
+    });
+    RestResponse response = await this
+        .restAdapter
+        .post(BFastConfig.getInstance().databaseURL(this.appName), authRule);
+    var data = response.data;
+    if (data != null &&
+        data['auth'] != null &&
+        data['auth']['signIn'] != null) {
+      await this.cacheAdapter.set('_current_user_', data['auth']['signIn'], 7);
+      return data['auth']['signIn'];
+    } else {
+      throw {
+        "message": data['errors'] != null &&
+                data['errors']['auth'] != null &&
+                data['errors']['auth']['signIn'] != null
+            ? data['errors']['auth']['signIn']['message']
+            : 'Fails to login'
+      };
+    }
   }
 
   @override
   Future logOut([AuthOptions options]) async {
-    var user = await this.currentUser();
     await this.cacheAdapter.set('_current_user_', '_empty_');
-    if (user != null && user['sessionToken'] != null) {
-      var postHeader = this._geHeadersWithToken(user, options);
-      this
-          .restAdapter
-          .post(BFastConfig.getInstance().databaseURL(this.appName, '/logout'),
-              {}, RestRequestConfig(headers: postHeader))
-          .catchError((e) {});
-    }
     return true;
   }
 
   @override
   Future requestPasswordReset(String email, [AuthOptions options]) async {
-    var user = await this.currentUser();
-    if (user != null && user['sessionToken'] != null) {
-      var postHeader = this._geHeadersWithToken(user, options);
-      RestResponse response = await this.restAdapter.post(
-          BFastConfig.getInstance()
-              .databaseURL(this.appName, '/requestPasswordReset'),
-          {email: user['email'] != null ? user['email'] : email},
-          RestRequestConfig(headers: postHeader));
-      return response.data;
+    const authRule = {};
+    authRule.addAll({
+      'applicationId':
+          BFastConfig.getInstance().getAppCredential(this.appName).applicationId
+    });
+    authRule.addAll({
+      "auth": {
+        "reset": {"email": email}
+      }
+    });
+    RestResponse response = await this
+        .restAdapter
+        .post(BFastConfig.getInstance().databaseURL(this.appName), authRule);
+    var data = response.data;
+    if (data != null && data['auth'] != null && data['auth']['reset'] != null) {
+      return data['auth']['reset'];
     } else {
-      throw 'No current user in your device';
+      throw {
+        "message": data['errors'] != null &&
+                data['errors']['auth'] != null &&
+                data['errors']['auth']['reset'] != null
+            ? data['errors']['auth']['reset']['message']
+            : 'Fails to reset password'
+      };
     }
   }
 
@@ -139,74 +143,48 @@ class AuthController extends AuthAdapter {
   Future setCurrentUser(user) async {
     await this
         .cacheAdapter
-        .set('_current_user_', user == null ? '_empty_' : user, 30);
+        .set('_current_user_', user == null ? '_empty_' : user, 6);
     return user;
   }
 
   @override
   Future signUp(String username, String password, Map<String, dynamic> attrs,
       [AuthOptions options]) async {
-    var postHeaders = <String, String>{};
-    if (options != null && options.useMasterKey == true) {
-      postHeaders.addAll({
-        'X-Parse-Master-Key': BFastConfig.getInstance()
-            .getAppCredential(this.appName)
-            .appPassword,
-      });
-    }
-    postHeaders.addAll({
-      'X-Parse-Application-Id':
+    const authRule = {};
+    authRule.addAll({
+      'applicationId':
           BFastConfig.getInstance().getAppCredential(this.appName).applicationId
     });
-    var userData = {};
-    userData["username"] = username;
-    userData["password"] = password;
-    userData.addAll(attrs);
-    RestResponse response = await this.restAdapter.post(
-        BFastConfig.getInstance().databaseURL(this.appName, '/users'),
-        userData,
-        RestRequestConfig(headers: postHeaders));
-    userData.remove('password');
-    // userData.remove('password');
-    userData.addAll(response.data);
-    await this.cacheAdapter.set('_current_user_', userData, 30);
-    return userData;
+    attrs.addAll({"username": username, "password": password});
+    attrs['email'] = attrs['email'] ? attrs['email'] : '';
+    authRule.addAll({
+      "auth": {"signUp": attrs}
+    });
+    RestResponse response = await this
+        .restAdapter
+        .post(BFastConfig.getInstance().databaseURL(this.appName), authRule);
+    var data = response.data;
+    if (data != null &&
+        data['auth'] != null &&
+        data['auth']['signUp'] != null) {
+      await this.cacheAdapter.set('_current_user_', data.auth.signUp, 7);
+      return data['auth']['signUp'];
+    } else {
+      throw {
+        "message": data['errors'] != null &&
+                data['errors']['auth'] != null &&
+                data['errors']['auth']['signUp'] != null
+            ? data['errors']['auth']['signUp']['message']
+            : 'Fails to signUp'
+      };
+    }
   }
 
   @override
   Future updateUser(Map userModel, [AuthOptions options]) async {
-    Map user = await this.currentUser();
-    if (user != null && user["sessionToken"] != null) {
-      var postHeaders = this._geHeadersWithToken(user, options);
-      RestResponse response = await this.restAdapter.put(
-          BFastConfig.getInstance()
-              .databaseURL(this.appName, '/users/' + user['objectId']),
-          userModel,
-          RestRequestConfig(headers: postHeaders));
-      user.remove('password');
-      user.addAll(response.data);
-      user.addAll(userModel);
-      await this.cacheAdapter.set('_current_user_', user, 30);
-      return user;
-    } else {
-      throw 'Not current user in your device';
-    }
-  }
-
-  Map _geHeadersWithToken(Map user, [AuthOptions options]) {
-    var postHeader = <String, String>{};
-    if (options != null && options.useMasterKey == true) {
-      postHeader.addAll({
-        'X-Parse-Master-Key': BFastConfig.getInstance()
-            .getAppCredential(this.appName)
-            .appPassword,
-      });
-    }
-    postHeader.addAll({'X-Parse-Session-Token': user["sessionToken"]});
-    postHeader.addAll({
-      'X-Parse-Application-Id':
-          BFastConfig.getInstance().getAppCredential(this.appName).applicationId
-    });
-    return postHeader;
+    throw {
+      "message":
+          "Not supported, use _User collection in your secure env with masterKey to update user details"
+    };
   }
 }

@@ -1,5 +1,3 @@
-import 'package:bfast/adapter/function.dart';
-import 'package:bfast/adapter/realtime.dart';
 import 'package:bfast/bfast_config.dart';
 import 'package:bfast/controller/function.dart';
 import 'package:bfast/controller/realtime.dart';
@@ -12,7 +10,7 @@ class BFastFunctions {
     this._appName = appName;
   }
 
-  FunctionAdapter request(String path) {
+  FunctionController request(String path) {
     return FunctionController(path, BFastHttpClientController(),
         appName: this._appName);
   }
@@ -21,9 +19,9 @@ class BFastFunctions {
   /// @param eventName
   /// @param onConnect {function} callback when connection established
   /// @param onDisconnect {function} callback when connection terminated
-  RealtimeAdapter event(String eventName,
+  SocketController event(String eventName,
       {Function(dynamic data) onConnect, Function(dynamic data) onDisconnect}) {
-    return new RealtimeController(eventName,
+    return new SocketController(eventName,
         appName: this._appName,
         onConnect: onConnect,
         onDisconnect: onDisconnect);

@@ -91,7 +91,7 @@ class DatabaseController {
 }
 
 class DatabaseChangesController {
-  RealtimeController socketController;
+  SocketController socketController;
 
   DatabaseChangesController(this.socketController);
 
