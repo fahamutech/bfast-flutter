@@ -49,7 +49,7 @@ class DatabaseController {
         this.domainName, this.restAdapter, this.rulesController, this.appName);
   }
 
-  Future<R> save<T, R>(T model, [RequestOptions options]) async {
+  Future<R> save<T extends Map, R>(T model, [RequestOptions options]) async {
     var createRule = await this.rulesController.createRule(
         this.domainName,
         model,

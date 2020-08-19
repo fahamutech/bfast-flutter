@@ -11,45 +11,55 @@ class RulesController {
   RulesController(this.authAdapter);
 
   Future<dynamic> createRule(
-      String domain, dynamic data, AppCredentials appCredential,
+      String domain, var data, AppCredentials appCredential,
       [RequestOptions options]) async {
-    const createRule = {};
-    if (options != null && options.useMasterKey != true) {
+    assert(domain != null, 'domain must not be null');
+
+    var createRule = {};
+    if (options != null && options.useMasterKey == true) {
       createRule.addAll({"masterKey": appCredential.appPassword});
-      createRule.addAll({"applicationId": appCredential.applicationId});
-      if (data != null) {
-        if (data is List) {
-          data.map((x) {
-            x['returnFields'] = options != null && options.returnFields != null
-                ? options.returnFields
-                : [];
-            return x;
-          });
-        } else {
-          data['returnFields'] = options != null && options.returnFields != null
+    }
+    createRule.addAll({"applicationId": appCredential.applicationId});
+    if (data != null) {
+      assert(
+          (data is Map<dynamic, dynamic> ||
+                  data is List<Map<dynamic, dynamic>>) ==
+              true,
+          'data must either be Map<dynamic, dynamic> or List<Map<dynamic, dynamic>>');
+      if (data is List) {
+        data = data.map((value) {
+          Map<dynamic, dynamic> _data = Map.from(value);
+          _data['return'] = options != null && options.returnFields != null
               ? options.returnFields
               : [];
-        }
-        createRule.addAll({
-          ['create$domain']: data
-        });
-        return this.addToken(createRule);
-      } else {
-        throw {'message': 'please provide data to save'};
+          return _data;
+        }).toList();
+      } else if (data is Map) {
+        Map<dynamic, dynamic> _data = Map.from(data);
+        _data['return'] = options != null && options.returnFields != null
+            ? options.returnFields
+            : [];
+        data = _data;
       }
+      createRule.addAll({'create$domain': data});
+      return this.addToken(createRule);
+    } else {
+      throw {'message': 'please provide data to save'};
     }
   }
 
   Future<dynamic> deleteRule(
       String domain, QueryModel query, AppCredentials appCredential,
       [RequestOptions options]) {
-    var deleteRule = Map();
+    assert(domain != null, 'domain must not be null');
+    assert(query != null, 'query must not be null');
+    var deleteRule = {};
     if (options != null && options.useMasterKey == true) {
       deleteRule.addAll({"masterKey": appCredential.appPassword});
     }
     deleteRule.addAll({
       "applicationId": appCredential.applicationId,
-      ['delete$domain']: query
+      'delete$domain': {'id': query?.id, 'filter': query?.filter}
     });
     return this.addToken(deleteRule);
   }
@@ -57,7 +67,7 @@ class RulesController {
   Future<dynamic> updateRule(String domain, QueryModel query,
       UpdateModel updateModel, AppCredentials appCredential,
       [RequestOptions options]) {
-    const updateRule = {};
+    var updateRule = {};
     if (options != null && options.useMasterKey == true) {
       updateRule.addAll({"masterKey": appCredential.appPassword});
     }
@@ -75,7 +85,7 @@ class RulesController {
   Future<dynamic> aggregateRule(
       String domain, List<dynamic> pipeline, AppCredentials appCredentials,
       [RequestOptions options]) {
-    const aggregateRule = {};
+    var aggregateRule = {};
     if (options != null && options.useMasterKey == true) {
       aggregateRule.addAll({'masterKey': appCredentials.appPassword});
     }
@@ -89,7 +99,7 @@ class RulesController {
   Future<dynamic> queryRule(
       String domain, QueryModel queryModel, AppCredentials appCredentials,
       [RequestOptions options]) {
-    const queryRule = {};
+    var queryRule = {};
     if (options != null && options.useMasterKey == true) {
       queryRule.addAll({'masterKey': appCredentials.appPassword});
     }
@@ -98,7 +108,7 @@ class RulesController {
         : [];
     queryRule.addAll({
       "applicationId": appCredentials.applicationId,
-      ['query$domain']: queryModel
+      'query$domain': queryModel.toMap()
     });
     return this.addToken(queryRule);
   }
@@ -142,10 +152,9 @@ class RulesController {
     return this.addToken(transactionRule);
   }
 
-  Future storage(
-      String action, dynamic payload, AppCredentials appCredentials,
+  Future storage(String action, dynamic payload, AppCredentials appCredentials,
       [RequestOptions options]) async {
-    const storageRule = {};
+    var storageRule = {};
     if (options != null && options.useMasterKey == true) {
       storageRule.addAll({'masterKey': appCredentials.appPassword});
     }

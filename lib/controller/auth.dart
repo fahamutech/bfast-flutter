@@ -74,7 +74,7 @@ class AuthController extends AuthAdapter {
 
   @override
   Future logIn(String username, String password, [AuthOptions options]) async {
-    const authRule = {};
+    var authRule = {};
     authRule.addAll({
       'applicationId':
           BFastConfig.getInstance().getAppCredential(this.appName).applicationId
@@ -112,7 +112,7 @@ class AuthController extends AuthAdapter {
 
   @override
   Future requestPasswordReset(String email, [AuthOptions options]) async {
-    const authRule = {};
+    var authRule = {};
     authRule.addAll({
       'applicationId':
           BFastConfig.getInstance().getAppCredential(this.appName).applicationId
@@ -150,7 +150,7 @@ class AuthController extends AuthAdapter {
   @override
   Future signUp(String username, String password, Map<String, dynamic> attrs,
       [AuthOptions options]) async {
-    const authRule = {};
+    var authRule = {};
     authRule.addAll({
       'applicationId':
           BFastConfig.getInstance().getAppCredential(this.appName).applicationId

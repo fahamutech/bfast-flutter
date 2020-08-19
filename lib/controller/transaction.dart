@@ -34,7 +34,7 @@ class TransactionController {
     var transactionRule = await this._rulesController.transaction(
         this.transactionRequests,
         BFastConfig.getInstance().getAppCredential(this._appName),
-        RequestOptions(useMasterKey));
+        RequestOptions(userMasterKey: useMasterKey));
     RestResponse response = await this._restAdapter.post(
         BFastConfig.getInstance().databaseURL(this._appName), transactionRule);
     this.transactionRequests = [];

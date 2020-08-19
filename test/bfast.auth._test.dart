@@ -23,7 +23,7 @@ void main() {
     test("should do a transaction on bfast database", () async {
       AuthController authController = AuthController(
           BFastHttpClientController(),
-          CacheMockController({"name": "mock"}),
+          MockCacheController({"name": "mock"}),
           BFastConfig.DEFAULT_APP);
 //      var r = await authController.updateUser({"user":"joshua"});
 //      print(r);

@@ -25,7 +25,7 @@ void main() {
   BFastHttpClientController httpClientController =
       BFastHttpClientController(httpClient: mockHttpClient);
   AuthController authController = AuthController(
-      httpClientController, CacheMockController({}), BFastConfig.DEFAULT_APP);
+      httpClientController, MockCacheController({}), BFastConfig.DEFAULT_APP);
   RulesController rulesController = RulesController(authController);
   DatabaseController domainController = DatabaseController(
       'test',
@@ -100,7 +100,7 @@ void main() {
                 body: anyNamed('body')))
             .thenAnswer((_) async => http.Response(
                 'Invalid argument(s): Invalid request body "1234".', 400));
-        await domainController.save<int, dynamic>(1234);
+        await domainController.save<Map,dynamic>(1234 as dynamic);
       } catch (r) {
         expect(
             r["message"], 'Invalid argument(s): Invalid request body "1234".');

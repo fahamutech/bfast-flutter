@@ -1,10 +1,10 @@
 import 'package:bfast/adapter/cache.dart';
 import 'package:bfast/adapter/query.dart';
 
-class CacheMockController extends CacheAdapter {
+class MockCacheController extends CacheAdapter {
   Map _mockData = {};
 
-  CacheMockController(Map mockData) {
+  MockCacheController(Map mockData) {
     this._mockData = mockData;
   }
 

@@ -16,7 +16,7 @@ class BFastDatabase {
     CacheController authCache = CacheController(
         this.appName,
         BFastConfig.getInstance().getCacheDatabaseName(
-            BFastConfig.getInstance().DEFAULT_AUTH_CACHE_DB_NAME(),
+            BFastConfig.getInstance().DEFAULT_AUTH_CACHE_DB_NAME,
             this.appName),
         BFastConfig.getInstance()
             .getCacheCollectionName('cache', this.appName));
