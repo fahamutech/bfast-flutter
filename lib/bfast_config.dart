@@ -90,9 +90,9 @@ class BFastConfig {
       }
     }
     if (suffix != null) {
-      return 'https://${this.getAppCredential(appName).projectId}-daas.bfast.fahamutech.com$suffix';
+      return 'https://${this.getAppCredential(appName).projectId}-daas.bfast.fahamutech.com/v2$suffix';
     } else {
-      return 'https://${this.getAppCredential(appName).projectId}-daas.bfast.fahamutech.com';
+      return 'https://${this.getAppCredential(appName).projectId}-daas.bfast.fahamutech.com/v2';
     }
   }
 
