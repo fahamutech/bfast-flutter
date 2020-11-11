@@ -30,7 +30,7 @@ class FunctionController<T> {
     }
     RestResponse response = await this.restAdapter.delete(
         BFastConfig.getInstance().functionsURL(this.functionPath, this.appName),
-        deleteConfig);
+        config: deleteConfig);
     return response.data;
   }
 
@@ -48,7 +48,7 @@ class FunctionController<T> {
     }
     RestResponse response = await this.restAdapter.get(
         BFastConfig.getInstance().functionsURL(this.functionPath, this.appName),
-        getConfig);
+        config: getConfig);
     return response.data;
   }
 
@@ -68,8 +68,8 @@ class FunctionController<T> {
       RestResponse value = await this.restAdapter.post(
           BFastConfig.getInstance()
               .functionsURL(this.functionPath, this.appName),
-          data != null ? data : {},
-          postConfig);
+          data: data != null ? data : {},
+          config: postConfig);
       return value.data;
     } else {
       throw {"code": -1, "message": 'Please provide function path'};
@@ -90,8 +90,8 @@ class FunctionController<T> {
     }
     RestResponse response = await this.restAdapter.put(
         BFastConfig.getInstance().functionsURL(this.functionPath, this.appName),
-        data != null ? data : {},
-        putConfig);
+        data: data != null ? data : {},
+        config: putConfig);
     return response.data;
   }
 }

@@ -89,9 +89,9 @@ class UpdateController {
         this._build(),
         BFastConfig.getInstance().getAppCredential(this._appName),
         options);
-    RestResponse response = await this
-        ._restAdapter
-        .post(BFastConfig.getInstance().databaseURL(this._appName), updateRule);
+    RestResponse response = await this._restAdapter.post(
+        BFastConfig.getInstance().databaseURL(this._appName),
+        data: updateRule);
     return DatabaseController.extractResultFromServer(
         response.data, 'update', this._domain);
   }

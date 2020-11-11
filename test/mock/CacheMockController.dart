@@ -9,7 +9,7 @@ class MockCacheController extends CacheAdapter {
   }
 
   @override
-  bool cacheEnabled([RequestOptions options]) {
+  bool cacheEnabled({RequestOptions options}) {
     return false;
   }
 
@@ -29,7 +29,7 @@ class MockCacheController extends CacheAdapter {
   }
 
   @override
-  Future<bool> remove(String identifier, [bool force]) async {
+  Future<bool> remove(String identifier, {bool force}) async {
     if (identifier == 'ok') {
       return true;
     }
@@ -37,7 +37,7 @@ class MockCacheController extends CacheAdapter {
   }
 
   @override
-  Future<T> set<T>(String identifier, T data, [int dtl]) async {
+  Future<T> set<T>(String identifier, T data, {int dtl}) async {
     return data;
   }
 }

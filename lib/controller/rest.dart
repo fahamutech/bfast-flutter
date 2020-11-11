@@ -15,7 +15,7 @@ class BFastHttpClientController extends RestAdapter {
 
   @override
   Future<RestResponse<R>> delete<T, R>(String url,
-      [RestRequestConfig config]) async {
+      {RestRequestConfig config}) async {
     var response = await this.httpClient.delete(
         this._encodeUrlQueryParams(url, config?.params),
         headers: config?.headers);
@@ -35,7 +35,7 @@ class BFastHttpClientController extends RestAdapter {
 
   @override
   Future<RestResponse<R>> get<T, R>(String url,
-      [RestRequestConfig config]) async {
+      {RestRequestConfig config}) async {
     var response = await this.httpClient.get(
         this._encodeUrlQueryParams(url, config?.params),
         headers: config?.headers);
@@ -67,7 +67,7 @@ class BFastHttpClientController extends RestAdapter {
 
   @override
   Future<RestResponse<R>> head<T, R>(String url,
-      [RestRequestConfig config]) async {
+      {RestRequestConfig config}) async {
     var response = await this.httpClient.head(
         this._encodeUrlQueryParams(url, config?.params),
         headers: config?.headers);
@@ -87,7 +87,7 @@ class BFastHttpClientController extends RestAdapter {
 
   @override
   Future<RestResponse<R>> options<T, R>(String url,
-      [RestRequestConfig config]) async {
+      {RestRequestConfig config}) async {
     var response = await this.httpClient.head(
         this._encodeUrlQueryParams(url, config?.params),
         headers: config?.headers);
@@ -107,7 +107,7 @@ class BFastHttpClientController extends RestAdapter {
 
   @override
   Future<RestResponse<R>> patch<T, R>(String url,
-      [T data, RestRequestConfig config]) async {
+      {T data, RestRequestConfig config}) async {
     var response = await this.httpClient.patch(
         this._encodeUrlQueryParams(url, config?.params),
         body: data,
@@ -128,13 +128,15 @@ class BFastHttpClientController extends RestAdapter {
 
   @override
   Future<RestResponse<R>> post<T, R>(String url,
-      [T data,
+      {T data,
       RestRequestConfig config,
-      http.MultipartRequest multipartRequest]) async {
+      http.MultipartRequest multipartRequest}) async {
     var response = await this.httpClient.post(
         this._encodeUrlQueryParams(url, config?.params),
         body: (data != null && data is Map) ? jsonEncode(data) : data,
-        headers: config?.headers);
+        headers: config != null && config.headers != null
+            ? config.headers
+            : {"content-type": "application/json"});
     if (response.statusCode.toString().startsWith('20') == true) {
       return RestResponse(
           data: response.body.startsWith('{')
@@ -151,7 +153,9 @@ class BFastHttpClientController extends RestAdapter {
 
   @override
   Future<RestResponse> multiPartRequest(String url, ByteBuffer data,
-      {http.MultipartRequest multipartRequest, String method = 'POST', RestRequestConfig config}) async {
+      {http.MultipartRequest multipartRequest,
+      String method = 'POST',
+      RestRequestConfig config}) async {
     var uri = Uri.parse(url);
     http.MultipartRequest request;
     if (multipartRequest == null) {
@@ -173,7 +177,7 @@ class BFastHttpClientController extends RestAdapter {
 
   @override
   Future<RestResponse<R>> put<T, R>(String url,
-      [T data, RestRequestConfig config]) async {
+      {T data, RestRequestConfig config}) async {
     var response = await this.httpClient.put(
         this._encodeUrlQueryParams(url, config?.params),
         body: jsonEncode(data),

@@ -57,7 +57,7 @@ class DatabaseController {
         options);
     RestResponse response = await this
         .restAdapter
-        .post(BFastConfig.getInstance().databaseURL(this.appName), createRule);
+        .post(BFastConfig.getInstance().databaseURL(this.appName), data: createRule);
     return DatabaseController.extractResultFromServer(
         response.data, 'create', this.domainName);
   }

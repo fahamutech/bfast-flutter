@@ -74,15 +74,15 @@ class BFastConfig {
       return path;
     }
     if (this.credentials[appName].functionsURL != null &&
-        this.credentials[appName].functionsURL.startsWith('http')==true) {
+        this.credentials[appName].functionsURL.startsWith('http') == true) {
       return this.credentials[appName].functionsURL + path;
     }
     return 'https://${this.credentials[appName].projectId}-faas.bfast.fahamutech.com$path';
   }
 
-  String databaseURL(String appName, [String suffix]) {
+  String databaseURL(String appName, [String suffix = '']) {
     if (this.credentials[appName].databaseURL != null &&
-        this.credentials[appName].databaseURL.startsWith('http')==true) {
+        this.credentials[appName].databaseURL.startsWith('http') == true) {
       if (suffix != null) {
         return this.credentials[appName].databaseURL + suffix;
       } else {

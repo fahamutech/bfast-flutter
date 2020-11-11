@@ -10,15 +10,10 @@ class AuthController extends AuthAdapter {
   CacheAdapter cacheAdapter;
   String appName;
 
-  AuthController(
-      RestAdapter restAdapter, CacheAdapter cacheAdapter, String appName) {
-    this.cacheAdapter = cacheAdapter;
-    this.appName = appName;
-    this.restAdapter = restAdapter;
-  }
+  AuthController(this.restAdapter, this.cacheAdapter, this.appName);
 
   @override
-  Future authenticated([AuthOptions options]) async {
+  Future authenticated({AuthOptions options}) async {
     return this.currentUser();
   }
 
@@ -73,25 +68,27 @@ class AuthController extends AuthAdapter {
   }
 
   @override
-  Future logIn(String username, String password, [AuthOptions options]) async {
+  Future logIn(String username, String password, {AuthOptions options}) async {
+    RestRequestConfig config = RestRequestConfig();
+    config.headers = BFastConfig.getInstance().getHeaders(this.appName);
     var authRule = {};
     authRule.addAll({
-      'applicationId':
-          BFastConfig.getInstance().getAppCredential(this.appName).applicationId
-    });
-    authRule.addAll({
+      'applicationId': BFastConfig.getInstance()
+          .getAppCredential(this.appName)
+          .applicationId,
       "auth": {
         "signIn": {"username": username, "password": password}
       }
     });
-    RestResponse response = await this
-        .restAdapter
-        .post(BFastConfig.getInstance().databaseURL(this.appName), authRule);
+    RestResponse response = await this.restAdapter.post(
+        BFastConfig.getInstance().databaseURL(this.appName),
+        data: authRule,
+        config: config);
     var data = response.data;
     if (data != null &&
         data['auth'] != null &&
         data['auth']['signIn'] != null) {
-      await this.cacheAdapter.set('_current_user_', data['auth']['signIn'], 7);
+      await this.cacheAdapter.set('_current_user_', data['auth']['signIn'], dtl: 7);
       return data['auth']['signIn'];
     } else {
       throw {
@@ -105,13 +102,13 @@ class AuthController extends AuthAdapter {
   }
 
   @override
-  Future logOut([AuthOptions options]) async {
+  Future logOut({AuthOptions options}) async {
     await this.cacheAdapter.set('_current_user_', '_empty_');
     return true;
   }
 
   @override
-  Future requestPasswordReset(String email, [AuthOptions options]) async {
+  Future requestPasswordReset(String email, {AuthOptions options}) async {
     var authRule = {};
     authRule.addAll({
       'applicationId':
@@ -122,9 +119,9 @@ class AuthController extends AuthAdapter {
         "reset": {"email": email}
       }
     });
-    RestResponse response = await this
-        .restAdapter
-        .post(BFastConfig.getInstance().databaseURL(this.appName), authRule);
+    RestResponse response = await this.restAdapter.post(
+        BFastConfig.getInstance().databaseURL(this.appName),
+        data: authRule);
     var data = response.data;
     if (data != null && data['auth'] != null && data['auth']['reset'] != null) {
       return data['auth']['reset'];
@@ -143,13 +140,13 @@ class AuthController extends AuthAdapter {
   Future setCurrentUser(user) async {
     await this
         .cacheAdapter
-        .set('_current_user_', user == null ? '_empty_' : user, 6);
+        .set('_current_user_', user == null ? '_empty_' : user, dtl: 6);
     return user;
   }
 
   @override
   Future signUp(String username, String password, Map<String, dynamic> attrs,
-      [AuthOptions options]) async {
+      {AuthOptions options}) async {
     var authRule = {};
     authRule.addAll({
       'applicationId':
@@ -160,14 +157,14 @@ class AuthController extends AuthAdapter {
     authRule.addAll({
       "auth": {"signUp": attrs}
     });
-    RestResponse response = await this
-        .restAdapter
-        .post(BFastConfig.getInstance().databaseURL(this.appName), authRule);
+    RestResponse response = await this.restAdapter.post(
+        BFastConfig.getInstance().databaseURL(this.appName),
+        data: authRule);
     var data = response.data;
     if (data != null &&
         data['auth'] != null &&
         data['auth']['signUp'] != null) {
-      await this.cacheAdapter.set('_current_user_', data.auth.signUp, 7);
+      await this.cacheAdapter.set('_current_user_', data.auth.signUp, dtl: 7);
       return data['auth']['signUp'];
     } else {
       throw {
@@ -181,7 +178,7 @@ class AuthController extends AuthAdapter {
   }
 
   @override
-  Future updateUser(Map userModel, [AuthOptions options]) async {
+  Future updateUser(Map userModel, {AuthOptions options}) async {
     throw {
       "message":
           "Not supported, use _User collection in your secure env with masterKey to update user details"

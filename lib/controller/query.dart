@@ -163,9 +163,9 @@ class QueryController {
         this._buildQuery(),
         BFastConfig.getInstance().getAppCredential(this.appName),
         options);
-    var response = await this
-        .restAdapter
-        .post(BFastConfig.getInstance().databaseURL(this.appName), deleteRule);
+    var response = await this.restAdapter.post(
+        BFastConfig.getInstance().databaseURL(this.appName),
+        data: deleteRule);
     return DatabaseController.extractResultFromServer(
         response.data, 'delete', this.domain);
   }
@@ -239,11 +239,11 @@ class QueryController {
   }
 
   Future<dynamic> _queryRuleRequest(dynamic queryRule) async {
-    RestResponse response = await this
-        .restAdapter
-        .post(BFastConfig.getInstance().databaseURL(this.appName), queryRule);
+    RestResponse response = await this.restAdapter.post(
+        BFastConfig.getInstance().databaseURL(this.appName),
+        data: queryRule);
     var data = response.data;
-    if (data !=null && data['query${this.domain}'] !=null) {
+    if (data != null && data['query${this.domain}'] != null) {
       return data['query${this.domain}'];
     } else {
       Map errors = data['errors'];
@@ -260,7 +260,8 @@ class QueryController {
 
   Future<dynamic> aggregateRuleRequest(dynamic pipelineRule) async {
     RestResponse response = await this.restAdapter.post(
-        BFastConfig.getInstance().databaseURL(this.appName), pipelineRule);
+        BFastConfig.getInstance().databaseURL(this.appName),
+        data: pipelineRule);
     var data = response.data;
     if (data != null && data['aggregate${this.domain}'] != null) {
       return data['aggregate${this.domain}'];

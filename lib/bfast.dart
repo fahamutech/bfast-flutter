@@ -7,6 +7,7 @@ import 'package:bfast/bfast_functions.dart';
 import 'package:bfast/controller/auth.dart';
 import 'package:bfast/controller/cache.dart';
 import 'package:bfast/controller/rest.dart';
+import 'package:flutter/material.dart';
 
 import 'bfast_database.dart';
 
@@ -47,18 +48,19 @@ class BFast {
         appName);
   }
 
-  static CacheAdapter cache(CacheOptions options,
-      [String appName = BFastConfig.DEFAULT_APP]) {
+  static CacheAdapter cache(
+      {@required String database,
+      @required String collection,
+      String appName = BFastConfig.DEFAULT_APP}) {
     return CacheController(
       appName,
-      (options != null && options.database != null)
-          ? BFastConfig.getInstance()
-              .getCacheDatabaseName(options.database, appName)
+      (database != null)
+          ? BFastConfig.getInstance().getCacheDatabaseName(database, appName)
           : BFastConfig.getInstance().getCacheDatabaseName(
               BFastConfig.getInstance().DEFAULT_CACHE_DB_NAME, appName),
-      (options != null && options.database != null)
+      (collection != null)
           ? BFastConfig.getInstance()
-              .getCacheCollectionName(options.collection, appName)
+              .getCacheCollectionName(collection, appName)
           : BFastConfig.getInstance().getCacheCollectionName('cache', appName),
     );
   }
