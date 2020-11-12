@@ -24,12 +24,12 @@ class CacheController extends CacheAdapter {
       StoreRef storeRef = stringMapStoreFactory.store(this._collection);
       return DatabaseInstance(db, storeRef);
     } else {
-      var databaseFactory = databaseFactoryIo;
+      var databaseFactory =
+          databaseFactoryIo; // getDatabaseFactorySqflite(sqflite.databaseFactory); // databaseFactoryIo;
       var databasePah = await sqflite.getDatabasesPath();
       String dbPath = join(databasePah, '${this._database}.db');
-      // print(dbPath);
-      Database db = await databaseFactory.openDatabase(dbPath);
       StoreRef storeRef = stringMapStoreFactory.store(this._collection);
+      Database db = await databaseFactory.openDatabase(dbPath);
       return DatabaseInstance(db, storeRef);
     }
   }
@@ -42,11 +42,12 @@ class CacheController extends CacheAdapter {
       StoreRef storeRef = stringMapStoreFactory.store(this._collection);
       return DatabaseInstance(db, storeRef);
     } else {
-      var databaseFactory = databaseFactoryIo;
+      var databaseFactory =
+          databaseFactoryIo; //getDatabaseFactorySqflite(sqflite.databaseFactory); //
       var databasePah = await sqflite.getDatabasesPath();
       String dbPath = join(databasePah, '${this._database}_ttl_.db');
-      Database db = await databaseFactory.openDatabase(dbPath);
       StoreRef storeRef = stringMapStoreFactory.store(this._collection);
+      Database db = await databaseFactory.openDatabase(dbPath);
       return DatabaseInstance(db, storeRef);
     }
   }
@@ -84,8 +85,6 @@ class CacheController extends CacheAdapter {
   Future<T> get<T>(String identifier) async {
     await this.remove(identifier);
     DatabaseInstance databaseInstance = await this._getCacheDatabase();
-    //print(databaseInstance.store);
-    // print(databaseInstance.db);
     var res = await databaseInstance.store
         .record(identifier)
         .get(databaseInstance.db);

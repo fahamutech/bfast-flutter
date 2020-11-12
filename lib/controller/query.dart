@@ -42,7 +42,7 @@ class QueryController {
     return this;
   }
 
-  QueryController count([bool countQuery = false]) {
+  QueryController count([bool countQuery = true]) {
     this._query.count = countQuery;
     return this;
   }
@@ -214,28 +214,14 @@ class QueryController {
     return this.aggregateRuleRequest(aggregateRule);
   }
 
-  Future<T> find<T>(RequestOptions options) async {
+  Future<T> find<T>({RequestOptions options}) async {
     var queryRule = await this.rulesController.queryRule(
-        this.domain,
-        this._buildQuery(),
-        BFastConfig.getInstance().getAppCredential(this.appName),
-        options);
-// const identifier = 'find_${this.collectionName}_${JSON.stringify(queryModel && queryModel.filter ? queryModel.filter : {})}';
-// const cacheResponse = await this.cacheAdapter.get<T[]>(identifier);
-// if (this.cacheAdapter.cacheEnabled(options) && (cacheResponse != undefined || cacheResponse !== null)) {
-//     this._queryRuleRequest(queryRule)
-//         .then(value => {
-//             if (options!=null && options.freshDataCallback!=null) {
-//                 options.freshDataCallback({identifier, data: value});
-//             }
-//             return this.cacheAdapter.set<T[]>(identifier, value);
-//         })
-//         .catch();
-//     return cacheResponse;
-// } else {
-//  this.cacheAdapter.set<T[]>(identifier, response).catch();
+          this.domain,
+          this._buildQuery(),
+          BFastConfig.getInstance().getAppCredential(this.appName),
+          options: options,
+        );
     return await this._queryRuleRequest(queryRule);
-// }
   }
 
   Future<dynamic> _queryRuleRequest(dynamic queryRule) async {

@@ -22,29 +22,29 @@ class DatabaseController {
 
   Future<T> get<T>(String objectId, [RequestOptions options]) async {
     try {
-      return await this.query().byId(objectId).find(options);
+      return await this.query().byId(objectId).find(options: options);
     } catch (e) {
       throw {"message": DatabaseController.getErrorMessage(e)};
     }
   }
 
   Future<List<T>> getAll<T>(
-      [Map<String, dynamic> pagination, RequestOptions options]) async {
+      {int size, int skip, RequestOptions options}) async {
     try {
-      var number = pagination != null
-          ? pagination['size']
-          : await this.query().count().find(options);
+      var number = size!=null
+          ? size
+          : await this.query().count(true).find(options: options);
       return this
           .query()
-          .skip(pagination != null ? pagination["skip"] : 0)
+          .skip(skip != null ? skip : 0)
           .size(number)
-          .find(options);
+          .find(options: options);
     } catch (e) {
       throw {"message": DatabaseController.getErrorMessage(e)};
     }
   }
 
-  QueryController query<T>([RequestOptions options]) {
+  QueryController query<T>() {
     return QueryController(
         this.domainName, this.restAdapter, this.rulesController, this.appName);
   }
@@ -55,9 +55,9 @@ class DatabaseController {
         model,
         BFastConfig.getInstance().getAppCredential(this.appName),
         options);
-    RestResponse response = await this
-        .restAdapter
-        .post(BFastConfig.getInstance().databaseURL(this.appName), data: createRule);
+    RestResponse response = await this.restAdapter.post(
+        BFastConfig.getInstance().databaseURL(this.appName),
+        data: createRule);
     return DatabaseController.extractResultFromServer(
         response.data, 'create', this.domainName);
   }

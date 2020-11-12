@@ -98,7 +98,7 @@ class RulesController {
 
   Future<dynamic> queryRule(
       String domain, QueryModel queryModel, AppCredentials appCredentials,
-      [RequestOptions options]) {
+      {RequestOptions options}) {
     var queryRule = {};
     if (options != null && options.useMasterKey == true) {
       queryRule.addAll({'masterKey': appCredentials.appPassword});
