@@ -70,19 +70,19 @@ class BFastConfig {
   }
 
   String functionsURL(String path, String appName) {
-    if (path.startsWith('http')) {
+    if (path.startsWith('http') == true) {
       return path;
     }
     if (this.credentials[appName].functionsURL != null &&
-        this.credentials[appName].functionsURL.startsWith('http')) {
+        this.credentials[appName].functionsURL.startsWith('http') == true) {
       return this.credentials[appName].functionsURL + path;
     }
     return 'https://${this.credentials[appName].projectId}-faas.bfast.fahamutech.com$path';
   }
 
-  String databaseURL(String appName, [String suffix]) {
+  String databaseURL(String appName, [String suffix = '']) {
     if (this.credentials[appName].databaseURL != null &&
-        this.credentials[appName].databaseURL.startsWith('http')) {
+        this.credentials[appName].databaseURL.startsWith('http') == true) {
       if (suffix != null) {
         return this.credentials[appName].databaseURL + suffix;
       } else {
@@ -90,14 +90,14 @@ class BFastConfig {
       }
     }
     if (suffix != null) {
-      return 'https://${this.getAppCredential(appName).projectId}-daas.bfast.fahamutech.com$suffix';
+      return 'https://${this.getAppCredential(appName).projectId}-daas.bfast.fahamutech.com/v2$suffix';
     } else {
-      return 'https://${this.getAppCredential(appName).projectId}-daas.bfast.fahamutech.com';
+      return 'https://${this.getAppCredential(appName).projectId}-daas.bfast.fahamutech.com/v2';
     }
   }
 
   String getCacheDatabaseName(String name, String appName) {
-    if (name != null && name.isNotEmpty) {
+    if (name != null && name.isNotEmpty == true) {
       return 'bfast/${this.getAppCredential(appName).projectId}/$appName/$name';
     } else {
       return 'bfast/${this.getAppCredential(appName).projectId}/$appName';
@@ -122,20 +122,13 @@ class AppCredentials {
   CacheConfigOptions cache;
 
   AppCredentials(
-    String applicationId,
-    String projectId, {
-    String functionsURL,
-    String databaseURL,
-    String appPassword,
-    CacheConfigOptions cache,
-  }) {
-    this.applicationId = applicationId;
-    this.projectId = projectId;
-    this.functionsURL = functionsURL;
-    this.databaseURL = databaseURL;
-    this.appPassword = appPassword;
-    this.cache = cache;
-  }
+    this.applicationId,
+    this.projectId, {
+    this.functionsURL,
+    this.databaseURL,
+    this.appPassword,
+    this.cache,
+  });
 }
 
 class CacheConfigOptions {
@@ -143,9 +136,5 @@ class CacheConfigOptions {
   String collection;
   String ttlCollection;
 
-  CacheConfigOptions(bool enable, {String collection, String ttlCollection}) {
-    this.enable = enable;
-    this.collection = collection;
-    this.ttlCollection = ttlCollection;
-  }
+  CacheConfigOptions(this.enable, {this.collection, this.ttlCollection});
 }

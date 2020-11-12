@@ -3,7 +3,7 @@ import 'package:bfast/adapter/query.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
 import 'package:sembast/sembast.dart';
-import 'package:sembast_sqflite/sembast_sqflite.dart';
+import 'package:sembast/sembast_io.dart';
 import 'package:sembast_web/sembast_web.dart';
 import 'package:sqflite/sqflite.dart' as sqflite;
 
@@ -14,42 +14,40 @@ class CacheController extends CacheAdapter {
   String _collection;
   String _appName;
 
-  CacheController(String appName, String database, String collection) {
-    this._appName = appName;
-    this._collection = collection;
-    this._database = database;
-  }
+  CacheController(this._appName, this._database, this._collection);
 
   Future<DatabaseInstance> _getCacheDatabase() async {
-    if (kIsWeb) {
+    if (kIsWeb == true) {
       var databaseFactory = databaseFactoryWeb;
       String dbPath = '${this._database}';
-      var db = await databaseFactory.openDatabase(dbPath);
+      Database db = await databaseFactory.openDatabase(dbPath);
       StoreRef storeRef = stringMapStoreFactory.store(this._collection);
       return DatabaseInstance(db, storeRef);
     } else {
-      var databaseFactory = getDatabaseFactorySqflite(sqflite.databaseFactory);
+      var databaseFactory =
+          databaseFactoryIo; // getDatabaseFactorySqflite(sqflite.databaseFactory); // databaseFactoryIo;
       var databasePah = await sqflite.getDatabasesPath();
       String dbPath = join(databasePah, '${this._database}.db');
-      var db = await databaseFactory.openDatabase(dbPath);
       StoreRef storeRef = stringMapStoreFactory.store(this._collection);
+      Database db = await databaseFactory.openDatabase(dbPath);
       return DatabaseInstance(db, storeRef);
     }
   }
 
   Future<DatabaseInstance> _getTTLStore() async {
-    if (kIsWeb) {
+    if (kIsWeb == true) {
       var databaseFactory = databaseFactoryWeb;
       String dbPath = '${this._database}_ttl_';
-      var db = await databaseFactory.openDatabase(dbPath);
+      Database db = await databaseFactory.openDatabase(dbPath);
       StoreRef storeRef = stringMapStoreFactory.store(this._collection);
       return DatabaseInstance(db, storeRef);
     } else {
-      var databaseFactory = getDatabaseFactorySqflite(sqflite.databaseFactory);
+      var databaseFactory =
+          databaseFactoryIo; //getDatabaseFactorySqflite(sqflite.databaseFactory); //
       var databasePah = await sqflite.getDatabasesPath();
       String dbPath = join(databasePah, '${this._database}_ttl_.db');
-      var db = await databaseFactory.openDatabase(dbPath);
       StoreRef storeRef = stringMapStoreFactory.store(this._collection);
+      Database db = await databaseFactory.openDatabase(dbPath);
       return DatabaseInstance(db, storeRef);
     }
   }
@@ -60,7 +58,7 @@ class CacheController extends CacheAdapter {
   }
 
   @override
-  bool cacheEnabled([RequestOptions options]) {
+  bool cacheEnabled({RequestOptions options}) {
     if (options != null &&
         options.cacheEnable != null &&
         options.cacheEnable is bool) {
@@ -101,7 +99,7 @@ class CacheController extends CacheAdapter {
   }
 
   @override
-  Future<bool> remove(String identifier, [bool force]) async {
+  Future<bool> remove(String identifier, {bool force}) async {
     DatabaseInstance ttlDatabaseInstance = await this._getTTLStore();
     DatabaseInstance databaseInstance = await this._getCacheDatabase();
     var ttlRes = await ttlDatabaseInstance.store
@@ -114,9 +112,9 @@ class CacheController extends CacheAdapter {
       await databaseInstance.store
           .record(identifier)
           .delete(ttlDatabaseInstance.db);
-      await ttlDatabaseInstance.store
+      await databaseInstance.store
           .record(identifier)
-          .delete(ttlDatabaseInstance.db);
+          .delete(databaseInstance.db);
       return true;
     } else {
       return false;
@@ -124,7 +122,7 @@ class CacheController extends CacheAdapter {
   }
 
   @override
-  Future<T> set<T>(String identifier, T data, [int dtl]) async {
+  Future<T> set<T>(String identifier, T data, {int dtl}) async {
     DatabaseInstance databaseInstance = await this._getCacheDatabase();
     DatabaseInstance ttlDatabaseInstance = await this._getTTLStore();
     await databaseInstance.db.transaction((transaction) async {
@@ -142,21 +140,8 @@ class CacheController extends CacheAdapter {
 }
 
 class DatabaseInstance {
-  var db;
+  Database db;
   StoreRef store;
 
-  DatabaseInstance(var db, StoreRef store) {
-    this.store = store;
-    this.db = db;
-  }
-}
-
-class CacheOptions {
-  String database;
-  String collection;
-
-  CacheOptions({String database, String collection}) {
-    this.database = database;
-    this.collection = collection;
-  }
+  DatabaseInstance(this.db, this.store);
 }
