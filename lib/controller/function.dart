@@ -16,7 +16,6 @@ class FunctionController<T> {
     this.appName = appName;
   }
 
-  @override
   Future delete([RestRequestConfig config]) async {
     RestRequestConfig deleteConfig = RestRequestConfig();
     if (config != null && config.headers != null) {
@@ -34,7 +33,6 @@ class FunctionController<T> {
     return response.data;
   }
 
-  @override
   Future<T> get([RestRequestConfig config]) async {
     RestRequestConfig getConfig = RestRequestConfig();
     if (config != null && config.headers != null) {
@@ -52,7 +50,6 @@ class FunctionController<T> {
     return response.data;
   }
 
-  @override
   Future<T> post([Map<dynamic, dynamic> data, RestRequestConfig config]) async {
     if (this.functionPath != null && this.functionPath != '') {
       RestRequestConfig postConfig = RestRequestConfig();
@@ -76,7 +73,6 @@ class FunctionController<T> {
     }
   }
 
-  @override
   Future<T> put([Map<dynamic, dynamic> data, RestRequestConfig config]) async {
     RestRequestConfig putConfig = RestRequestConfig();
     if (config != null && config.headers != null) {

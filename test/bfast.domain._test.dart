@@ -20,7 +20,7 @@ class MockHttpClient extends Mock implements http.Client {
 }
 
 void main() {
-  BFast.init(AppCredentials("smartstock_lb", "smartstock"));
+  BFast.init(AppCredentials("bfastdemo", "bfastdemo"));
   MockHttpClient mockHttpClient = MockHttpClient();
   BFastHttpClientController httpClientController =
       BFastHttpClientController(httpClient: mockHttpClient);
@@ -41,11 +41,11 @@ void main() {
           headers: anyNamed('headers'),
           body: jsonEncode(
               {"name": "Joshua"}))).thenAnswer((_) async => http.Response(
-          '{"objectId": "WpBNH3dAKXFEf6D0", "createdAt": "2020-07-02T17:13:54.411Z"}',
+          '{"id": "WpBNH3dAKXFEf6D0", "createdAt": "2020-07-02T17:13:54.411Z"}',
           200));
 
       var r = await domainController.save<Map, Map>({"name": "Joshua"});
-      expect(r['objectId'], 'WpBNH3dAKXFEf6D0');
+      expect(r['id'], 'WpBNH3dAKXFEf6D0');
       // expect(r["createdAt"], !null);
     });
     test("should not save null data", () async {
@@ -63,13 +63,13 @@ void main() {
                     startsWith('${mockHttpClient.mockDaasAPi}/classes/test')),
                 headers: anyNamed('headers'),
                 body: jsonEncode({
-                  "objectId": 'WpBNH3dAKXFEf6D0',
+                  "id": 'WpBNH3dAKXFEf6D0',
                   "name": 'joshua'
                 }))).thenAnswer((_) async => http.Response(
             '{"code":137,"error":"A duplicate value for a field with unique values was provided"}',
             400));
         await domainController.save<Map, dynamic>(
-            {"objectId": 'WpBNH3dAKXFEf6D0', "name": 'joshua'});
+            {"id": 'WpBNH3dAKXFEf6D0', "name": 'joshua'});
       } catch (r) {
         expect(r['message'],
             '{"code":137,"error":"A duplicate value for a field with unique values was provided"}');
@@ -195,13 +195,13 @@ void main() {
 //              jsonEncode({
 //                "results": [
 //                  {
-//                    "objectId": "R2zZV8eSyvA8PAd9",
+//                    "id": "R2zZV8eSyvA8PAd9",
 //                    "name": "Joshua",
 //                    "createdAt": "2020-07-02T19:23:46.165Z",
 //                    "updatedAt": "2020-07-02T19:23:46.165Z"
 //                  },
 //                  {
-//                    "objectId": "WpBNH3dAKXFEf6D0",
+//                    "id": "WpBNH3dAKXFEf6D0",
 //                    "name": "ethan",
 //                    "createdAt": "2020-07-02T17:13:54.411Z",
 //                    "updatedAt": "2020-07-04T13:45:32.607Z"
@@ -221,7 +221,7 @@ void main() {
 //              headers: anyNamed('headers')))
 //          .thenAnswer((realInvocation) async => http.Response(
 //              jsonEncode({
-//                "objectId": "R2zZV8eSyvA8PAd9",
+//                "id": "R2zZV8eSyvA8PAd9",
 //                "name": "Joshua",
 //                "createdAt": "2020-07-02T19:23:46.165Z",
 //                "updatedAt": "2020-07-02T19:23:46.165Z"
@@ -229,8 +229,8 @@ void main() {
 //              200));
 //      var r = await domainController.get('R2zZV8eSyvA8PAd9');
 //      expect(true, r != null);
-//      expect(true, r['objectId'] is String);
-//      expect(r['objectId'], "R2zZV8eSyvA8PAd9");
+//      expect(true, r['id'] is String);
+//      expect(r['id'], "R2zZV8eSyvA8PAd9");
 //    });
 //    test("should return data based on size of query model", () async {
 //      when(mockHttpClient.get(
@@ -240,7 +240,7 @@ void main() {
 //              jsonEncode({
 //                "results": [
 //                  {
-//                    "objectId": "R2zZV8eSyvA8PAd9",
+//                    "id": "R2zZV8eSyvA8PAd9",
 //                    "name": "Joshua",
 //                    "createdAt": "2020-07-02T19:23:46.165Z",
 //                    "updatedAt": "2020-07-02T19:23:46.165Z"
@@ -251,7 +251,7 @@ void main() {
 //      var r = await domainController.query().find(QueryModel(size: 1));
 //      expect(r.length, 1);
 //      expect(true, r != null);
-//      expect(r[0]["objectId"], "R2zZV8eSyvA8PAd9");
+//      expect(r[0]["id"], "R2zZV8eSyvA8PAd9");
 //    });
 //    test("should return data based on query model", () async {
 //      when(mockHttpClient.get(
@@ -261,7 +261,7 @@ void main() {
 //              jsonEncode({
 //                "results": [
 //                  {
-//                    "objectId": "R2zZV8eSyvA8PAd9",
+//                    "id": "R2zZV8eSyvA8PAd9",
 //                    "name": "Joshua",
 //                    "createdAt": "2020-07-02T19:23:46.165Z",
 //                    "updatedAt": "2020-07-02T19:23:46.165Z"
@@ -278,7 +278,7 @@ void main() {
 //          }));
 //      expect(r.length, 1);
 //      expect(true, r != null);
-//      expect(r[0]["objectId"], "R2zZV8eSyvA8PAd9");
+//      expect(r[0]["id"], "R2zZV8eSyvA8PAd9");
 //    });
 //  });
 }

@@ -19,8 +19,8 @@ class AuthController extends AuthAdapter {
 
   @override
   Future currentUser() async {
-    var user = await this.cacheAdapter.get('_current_user_');
-    if (user == '_empty_' || user == null) {
+    var user = await this.cacheAdapter.get(BFastConfig.AUTH_CACHE_NAME);
+    if (user == BFastConfig.AUTH_CACHE_DEFAULT_VALUE || user == null) {
       return null;
     }
     return user;
@@ -88,7 +88,9 @@ class AuthController extends AuthAdapter {
     if (data != null &&
         data['auth'] != null &&
         data['auth']['signIn'] != null) {
-      await this.cacheAdapter.set('_current_user_', data['auth']['signIn'], dtl: 7);
+      await this
+          .cacheAdapter
+          .set(BFastConfig.AUTH_CACHE_NAME, data['auth']['signIn'], dtl: 7);
       return data['auth']['signIn'];
     } else {
       throw {
@@ -103,7 +105,9 @@ class AuthController extends AuthAdapter {
 
   @override
   Future logOut({AuthOptions options}) async {
-    await this.cacheAdapter.set('_current_user_', '_empty_');
+    await this
+        .cacheAdapter
+        .set(BFastConfig.AUTH_CACHE_NAME, BFastConfig.AUTH_CACHE_DEFAULT_VALUE);
     return true;
   }
 
@@ -138,9 +142,9 @@ class AuthController extends AuthAdapter {
 
   @override
   Future setCurrentUser(user) async {
-    await this
-        .cacheAdapter
-        .set('_current_user_', user == null ? '_empty_' : user, dtl: 6);
+    await this.cacheAdapter.set(BFastConfig.AUTH_CACHE_NAME,
+        user == null ? BFastConfig.AUTH_CACHE_DEFAULT_VALUE : user,
+        dtl: 6);
     return user;
   }
 
@@ -164,7 +168,9 @@ class AuthController extends AuthAdapter {
     if (data != null &&
         data['auth'] != null &&
         data['auth']['signUp'] != null) {
-      await this.cacheAdapter.set('_current_user_', data.auth.signUp, dtl: 7);
+      await this
+          .cacheAdapter
+          .set(BFastConfig.AUTH_CACHE_NAME, data.auth.signUp, dtl: 7);
       return data['auth']['signUp'];
     } else {
       throw {

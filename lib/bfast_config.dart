@@ -6,6 +6,8 @@ class BFastConfig {
   static http.Client client;
 
   static const DEFAULT_APP = 'DEFAULT';
+  static const AUTH_CACHE_NAME = '_current_user_';
+  static const AUTH_CACHE_DEFAULT_VALUE = '_empty_';
   String _DEFAULT_DOMAINS_CACHE_DB_NAME = '__domain';
 
   get DEFAULT_DOMAINS_CACHE_DB_NAME {
