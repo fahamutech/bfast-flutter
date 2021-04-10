@@ -176,31 +176,41 @@ class QueryController {
   }
 
   DatabaseChangesController changes(
-      [Function onConnect, Function onDisconnect]) {
-    var socketController = new SocketController('/__changes__',
-        appName: this.appName,
-        onConnect: onConnect,
-        onDisconnect: onDisconnect);
-    var applicationId =
+      {Function onConnect, Function onDisconnect, RequestOptions options}) {
+    String applicationId =
         BFastConfig.getInstance().getAppCredential(this.appName).applicationId;
+    String projectId =
+        BFastConfig.getInstance().getAppCredential(this.appName).projectId;
+    String masterKey =
+        BFastConfig.getInstance().getAppCredential(this.appName).appPassword;
     var match = {};
-    if (this._buildQuery() != null && this._buildQuery().filter != null) {
+    if (this._buildQuery != null && this._buildQuery().filter != null) {
       match = this._buildQuery().filter;
-      match.forEach((key, value) {
-        match['fullDocument.$key'] = value;
+      match.keys.forEach((key) {
+        match['fullDocument.$key'] = match[key];
         match.remove(key);
       });
     }
-    socketController.emit(auth: {
-      "applicationId": applicationId
-    }, body: {
-      "domain": this.domain,
-      "pipeline": match != null
-          ? [
-              {"\$match": match}
-            ]
-          : []
-    });
+
+    SocketController socketController;
+    socketController = new SocketController('/v2/__changes__',
+        appName: this.appName, onConnect: () {
+      if (onConnect != null) {
+        onConnect();
+      }
+      socketController.emit(auth: {
+        'applicationId': applicationId,
+        'topic': '${projectId}_${this.domain}',
+        'masterKey': options.useMasterKey == true ? masterKey : null
+      }, body: {
+        'domain': this.domain,
+        'pipeline': match != null
+            ? [
+                {'\$match': match}
+              ]
+            : []
+      });
+    }, onDisconnect: onDisconnect);
     return new DatabaseChangesController(socketController);
   }
 

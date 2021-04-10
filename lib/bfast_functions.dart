@@ -20,7 +20,7 @@ class BFastFunctions {
   /// @param onConnect {function} callback when connection established
   /// @param onDisconnect {function} callback when connection terminated
   SocketController event(String eventName,
-      {Function(dynamic data) onConnect, Function(dynamic data) onDisconnect}) {
+      {Function() onConnect, Function() onDisconnect}) {
     return new SocketController(eventName,
         appName: this._appName,
         onConnect: onConnect,

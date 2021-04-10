@@ -9,25 +9,30 @@ class SocketController {
 
   SocketController(String eventName,
       {appName = BFastConfig.DEFAULT_APP,
-      void Function(dynamic e) onConnect,
-      void Function(dynamic e) onDisconnect}) {
+      dynamic Function() onConnect,
+      dynamic Function() onDisconnect}) {
     String path = eventName.length > 0 && eventName[0] == '/'
         ? eventName
         : '/' + eventName;
-    var url = path == '/__changes__'
+    var url = path == '/v2/__changes__'
         ? BFastConfig.getInstance().databaseURL(appName, path)
         : BFastConfig.getInstance().functionsURL(path, appName);
     this.socket = io(url, <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': false,
+      'reconnection': true,
+      'reconnectionAttempts': double.infinity,
+      'reconnectionDelay': 2000,        // how long to initially wait before attempting a new reconnection
+      'reconnectionDelayMax': 5000,     // maximum amount of time to wait between reconnection attempts. Each attempt increases the reconnection delay by 2x along with a randomization factor
+      'randomizationFactor': 0.5,
       // 'extraHeaders': {'foo': 'bar'} // optional
     });
     this.eventName = eventName;
     if (onConnect != null) {
-      this.socket.on("connect", (data) => onConnect(data));
+      this.socket.on("connect", (_) => onConnect());
     }
     if (onDisconnect != null) {
-      this.socket.on("disconnect", (data) => onDisconnect(data));
+      this.socket.on("disconnect", (_) => onDisconnect());
     }
     this.open();
   }
