@@ -1,15 +1,15 @@
 import 'package:bfast/adapter/cache.dart';
 import 'package:bfast/adapter/query.dart';
 
-class CacheMockController extends CacheAdapter {
+class MockCacheController extends CacheAdapter {
   Map _mockData = {};
 
-  CacheMockController(Map mockData) {
+  MockCacheController(Map mockData) {
     this._mockData = mockData;
   }
 
   @override
-  bool cacheEnabled([RequestOptions options]) {
+  bool cacheEnabled({RequestOptions options}) {
     return false;
   }
 
@@ -29,7 +29,7 @@ class CacheMockController extends CacheAdapter {
   }
 
   @override
-  Future<bool> remove(String identifier, [bool force]) async {
+  Future<bool> remove(String identifier, {bool force}) async {
     if (identifier == 'ok') {
       return true;
     }
@@ -37,7 +37,7 @@ class CacheMockController extends CacheAdapter {
   }
 
   @override
-  Future<T> set<T>(String identifier, T data, [int dtl]) async {
+  Future<T> set<T>(String identifier, T data, {int dtl}) async {
     return data;
   }
 }

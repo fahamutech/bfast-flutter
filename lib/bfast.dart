@@ -2,13 +2,12 @@ library bfast;
 
 import 'package:bfast/adapter/auth.dart';
 import 'package:bfast/adapter/cache.dart';
-import 'package:bfast/adapter/storage.dart';
-import 'package:bfast/bfast_functions.dart';
 import 'package:bfast/bfast_config.dart';
+import 'package:bfast/bfast_functions.dart';
 import 'package:bfast/controller/auth.dart';
 import 'package:bfast/controller/cache.dart';
 import 'package:bfast/controller/rest.dart';
-import 'package:bfast/controller/storage.dart';
+import 'package:flutter/material.dart';
 
 import 'bfast_database.dart';
 
@@ -19,8 +18,9 @@ class BFast {
     return BFastConfig.getInstance(options, appName).getAppCredential(appName);
   }
 
-  static BFastConfig getConfig() {
-    return BFastConfig.getInstance();
+  static BFastConfig getConfig(
+      [String appName = BFastConfig.DEFAULT_APP, AppCredentials config]) {
+    return BFastConfig.getInstance(config, appName);
   }
 
   static const utils = {"USER_DOMAIN_NAME": '_User'};
@@ -33,9 +33,9 @@ class BFast {
     return BFastFunctions(appName: appName);
   }
 
-  static StorageAdapter storage([String appName = BFastConfig.DEFAULT_APP]) {
-    return StorageController(BFastHttpClientController(), appName: appName);
-  }
+//  static StorageAdapter storage([String appName = BFastConfig.DEFAULT_APP]) {
+//    return StorageController(BFastHttpClientController(), appName: appName);
+//  }
 
   static AuthAdapter auth([String appName = BFastConfig.DEFAULT_APP]) {
     return new AuthController(
@@ -48,18 +48,19 @@ class BFast {
         appName);
   }
 
-  static CacheAdapter cache(CacheOptions options,
-      [String appName = BFastConfig.DEFAULT_APP]) {
+  static CacheAdapter cache(
+      {@required String database,
+      @required String collection,
+      String appName = BFastConfig.DEFAULT_APP}) {
     return CacheController(
       appName,
-      (options != null && options.database != null)
-          ? BFastConfig.getInstance()
-              .getCacheDatabaseName(options.database, appName)
+      (database != null)
+          ? BFastConfig.getInstance().getCacheDatabaseName(database, appName)
           : BFastConfig.getInstance().getCacheDatabaseName(
               BFastConfig.getInstance().DEFAULT_CACHE_DB_NAME, appName),
-      (options != null && options.database != null)
+      (collection != null)
           ? BFastConfig.getInstance()
-              .getCacheCollectionName(options.collection, appName)
+              .getCacheCollectionName(collection, appName)
           : BFastConfig.getInstance().getCacheCollectionName('cache', appName),
     );
   }
