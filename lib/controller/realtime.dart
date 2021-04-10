@@ -32,12 +32,10 @@ class SocketController {
     this.open();
   }
 
-  @override
   void emit({dynamic auth, @required dynamic body}) {
     this.socket.emit(this.eventName, {"auth": auth, "body": body});
   }
 
-  @override
   void listener(dynamic Function(dynamic response) handler) {
     this.socket.on(this.eventName, (data) => handler(data));
   }

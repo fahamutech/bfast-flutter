@@ -65,3 +65,6 @@ class BFast {
     );
   }
 }
+
+// // ignore: camel_case_types
+// class bfast with BFast{}

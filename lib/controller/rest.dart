@@ -53,7 +53,7 @@ class BFastHttpClientController extends RestAdapter {
     }
   }
 
-  String _encodeUrlQueryParams(String url, Map params) {
+  Uri _encodeUrlQueryParams(String url, Map params) {
     String urlWithParams = url;
     urlWithParams += '?';
     if (params != null) {
@@ -62,7 +62,7 @@ class BFastHttpClientController extends RestAdapter {
             '${key.toString()}=${Uri.encodeQueryComponent(value.toString())}&';
       });
     }
-    return urlWithParams;
+    return Uri.parse(urlWithParams);
   }
 
   @override

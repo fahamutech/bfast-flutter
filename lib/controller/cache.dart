@@ -17,45 +17,43 @@ class CacheController extends CacheAdapter {
   CacheController(this._appName, this._database, this._collection);
 
   Future<DatabaseInstance> _getCacheDatabase() async {
+    var databaseFactory = databaseFactoryIo;
+    StoreRef storeRef = stringMapStoreFactory.store(this._collection);
     if (kIsWeb == true) {
-      var databaseFactory = databaseFactoryWeb;
+      databaseFactory = databaseFactoryWeb;
       String dbPath = '${this._database}';
       Database db = await databaseFactory.openDatabase(dbPath);
-      StoreRef storeRef = stringMapStoreFactory.store(this._collection);
       return DatabaseInstance(db, storeRef);
     } else {
-      var databaseFactory =
-          databaseFactoryIo; // getDatabaseFactorySqflite(sqflite.databaseFactory); // databaseFactoryIo;
       var databasePah = await sqflite.getDatabasesPath();
       String dbPath = join(databasePah, '${this._database}.db');
-      StoreRef storeRef = stringMapStoreFactory.store(this._collection);
       Database db = await databaseFactory.openDatabase(dbPath);
       return DatabaseInstance(db, storeRef);
     }
   }
 
-  Future<DatabaseInstance> _getTTLStore() async {
-    if (kIsWeb == true) {
-      var databaseFactory = databaseFactoryWeb;
-      String dbPath = '${this._database}_ttl_';
-      Database db = await databaseFactory.openDatabase(dbPath);
-      StoreRef storeRef = stringMapStoreFactory.store(this._collection);
-      return DatabaseInstance(db, storeRef);
-    } else {
-      var databaseFactory =
-          databaseFactoryIo; //getDatabaseFactorySqflite(sqflite.databaseFactory); //
-      var databasePah = await sqflite.getDatabasesPath();
-      String dbPath = join(databasePah, '${this._database}_ttl_.db');
-      StoreRef storeRef = stringMapStoreFactory.store(this._collection);
-      Database db = await databaseFactory.openDatabase(dbPath);
-      return DatabaseInstance(db, storeRef);
-    }
-  }
+  // Future<DatabaseInstance> _getTTLStore() async {
+  //   if (kIsWeb == true) {
+  //     var databaseFactory = databaseFactoryWeb;
+  //     String dbPath = '${this._database}_ttl_';
+  //     Database db = await databaseFactory.openDatabase(dbPath);
+  //     StoreRef storeRef = stringMapStoreFactory.store(this._collection);
+  //     return DatabaseInstance(db, storeRef);
+  //   } else {
+  //     var databaseFactory =
+  //         databaseFactoryIo; //getDatabaseFactorySqflite(sqflite.databaseFactory); //
+  //     var databasePah = await sqflite.getDatabasesPath();
+  //     String dbPath = join(databasePah, '${this._database}_ttl_.db');
+  //     StoreRef storeRef = stringMapStoreFactory.store(this._collection);
+  //     Database db = await databaseFactory.openDatabase(dbPath);
+  //     return DatabaseInstance(db, storeRef);
+  //   }
+  // }
 
-  static int _getDayToLeave(int days) {
-    DateTime date = new DateTime.now();
-    return date.millisecondsSinceEpoch + (days * 24 * 60 * 60 * 1000);
-  }
+  // static int _getDayToLeave(int days) {
+  //   DateTime date = new DateTime.now();
+  //   return date.millisecondsSinceEpoch + (days * 24 * 60 * 60 * 1000);
+  // }
 
   @override
   bool cacheEnabled({RequestOptions options}) {
@@ -75,19 +73,18 @@ class CacheController extends CacheAdapter {
   @override
   Future<bool> clearAll() async {
     DatabaseInstance databaseInstance = await this._getCacheDatabase();
-    DatabaseInstance ttlDatabaseInstance = await this._getTTLStore();
     await databaseInstance.store.delete(databaseInstance.db);
-    await ttlDatabaseInstance.store.delete(ttlDatabaseInstance.db);
+    await databaseInstance.db.close();
     return true;
   }
 
   @override
   Future<T> get<T>(String identifier) async {
-    await this.remove(identifier);
     DatabaseInstance databaseInstance = await this._getCacheDatabase();
     var res = await databaseInstance.store
         .record(identifier)
         .get(databaseInstance.db);
+    await databaseInstance.db.close();
     return res as T;
   }
 
@@ -95,47 +92,29 @@ class CacheController extends CacheAdapter {
   Future<List<K>> keys<K>() async {
     DatabaseInstance databaseInstance = await this._getCacheDatabase();
     var keys = await databaseInstance.store.findKeys(databaseInstance.db);
+    await databaseInstance.db.close();
     return keys as List<K>;
   }
 
   @override
   Future<bool> remove(String identifier, {bool force}) async {
-    DatabaseInstance ttlDatabaseInstance = await this._getTTLStore();
     DatabaseInstance databaseInstance = await this._getCacheDatabase();
-    var ttlRes = await ttlDatabaseInstance.store
-        .record(identifier)
-        .get(ttlDatabaseInstance.db);
-    int dayToLeave = ttlRes as int;
-    if ((force != null && force == true) ||
-        (dayToLeave != null &&
-            dayToLeave < DateTime.now().millisecondsSinceEpoch)) {
-      await databaseInstance.store
-          .record(identifier)
-          .delete(ttlDatabaseInstance.db);
-      await databaseInstance.store
-          .record(identifier)
-          .delete(databaseInstance.db);
-      return true;
-    } else {
-      return false;
-    }
+    await databaseInstance.store.record(identifier).delete(databaseInstance.db);
+    await databaseInstance.db.close();
+    return true;
   }
 
   @override
   Future<T> set<T>(String identifier, T data, {int dtl}) async {
     DatabaseInstance databaseInstance = await this._getCacheDatabase();
-    DatabaseInstance ttlDatabaseInstance = await this._getTTLStore();
-    await databaseInstance.db.transaction((transaction) async {
-      await databaseInstance.store
-          .record(identifier)
-          .put(transaction, data, merge: true);
-    });
-    await ttlDatabaseInstance.db.transaction((transaction) async {
-      await databaseInstance.store.record(identifier).put(
-          transaction, CacheController._getDayToLeave(dtl != null ? dtl : 7),
-          merge: true);
-    });
-    return data;
+    var v1 = await databaseInstance.store
+        .record(identifier)
+        .put(databaseInstance.db, data, merge: true);
+    await databaseInstance.db.close();
+    if (v1 != null) {
+      return data;
+    }
+    throw "Fail to save data";
   }
 }
 
