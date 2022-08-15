@@ -1,4 +1,4 @@
-import 'package:bfast/adapter/query.dart';
+
 
 abstract class CacheAdapter {
   Future<T> set<T>(String identifier, T data, {int dtl});
@@ -10,6 +10,4 @@ abstract class CacheAdapter {
   Future<bool> clearAll();
 
   Future<bool> remove(String identifier, {bool force});
-
-  bool cacheEnabled({RequestOptions options});
 }
