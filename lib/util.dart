@@ -1,8 +1,8 @@
 // ( (*)->bool fn, (*)->* fn1, (*)->* fn2) -> x ->  fn1(x) : fn2(x)
 Function(dynamic) ifDoElse(
   Function(dynamic f) fn,
-  Function(dynamic f1) fn1,
-  Function(dynamic f2) fn2,
+  Function fn1,
+  Function fn2,
 ) =>
     (x) => fn(x) == true ? fn1(x) : fn2(x);
 

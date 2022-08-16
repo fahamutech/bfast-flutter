@@ -24,16 +24,3 @@ _errorIsMap(e) => ifDoElse((_) => e['errors'] != null,
 //  * -> String
 errorsMessage(dynamic e) =>
     ifDoElse((_) => e is Map, _errorIsMap, (_) => '')(e);
-
-// class DatabaseChangesController {
-//   SocketController socketController;
-//
-//   DatabaseChangesController(this.socketController);
-//
-//   addListener(dynamic Function(dynamic response) handler) =>
-//       this.socketController.listener(handler);
-//
-//   close() => this.socketController.close();
-//
-//   open() => this.socketController.open();
-// }

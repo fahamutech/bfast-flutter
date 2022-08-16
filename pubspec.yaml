@@ -1,6 +1,6 @@
 name: bfast
 description: BFast client sdk for flutter
-version: 4.2.0
+version: 5.0.0
 homepage: http://github.com/fahamutech/bfast-flutter
 
 environment:
@@ -22,7 +22,6 @@ dependencies:
 
 dev_dependencies:
   #  test: ^1.15.1
-  mockito: ^5.3.0
   flutter_test:
     sdk: flutter
 

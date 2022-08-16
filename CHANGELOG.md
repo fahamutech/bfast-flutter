@@ -3,6 +3,12 @@
 Refer to [BFastProject](http://bfast.fahamutech.com/docs) for better documentations.
 Always use latest version
 
+## [5.0.0] - 16/08/2022
+
+- minimize code to lift out all the implementation to developer
+- improve socket factory to be singleton
+- start migrate api to functional
+
 ## [4.1.1] - 04/10/2021
 
 ## [4.1.0] - 04/10/2021

@@ -39,7 +39,8 @@ var _databaseURLOrEmpty = ifDoElse(
 var _hasDatabaseURLAndStartWithHttp =
     compose([_isStartWithHttp, _databaseURLOrEmpty]);
 
-var _itOrEmpty = ifDoElse((x) => x is String, (y) => '$y', (_) => '');
+var _itOrEmpty =
+    ifDoElse((x) => x is String, (y) => '$y' /*.replaceAll('/v2', '')*/, (_) => '');
 
 Function(dynamic path) functionsURL(app) => ifDoElse(
       _isStartWithHttp,
