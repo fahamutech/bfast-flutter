@@ -1,6 +1,6 @@
 name: bfast
 description: BFast client sdk for flutter
-version: 5.0.0
+version: 5.0.0-beta.0
 homepage: http://github.com/fahamutech/bfast-flutter
 
 environment:
