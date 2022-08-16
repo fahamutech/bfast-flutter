@@ -13,6 +13,12 @@ dependencies:
   http: ^0.13.5
   socket_io_client: ^2.0.0
   path_provider: ^2.0.11
+#  tekartik_app_flutter_sembast:
+#    git:
+#      url: https://github.com/tekartik/app_flutter_utils.dart
+#      ref: dart2_3
+#      path: app_sembast
+#    version: '>=0.1.0'
 
 dev_dependencies:
   #  test: ^1.15.1
