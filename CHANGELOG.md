@@ -3,7 +3,7 @@
 Refer to [BFastProject](http://bfast.fahamutech.com/docs) for better documentations.
 Always use latest version
 
-## [5.0.0] - 16/08/2022
+## [5.0.0-beta.0] - 16/08/2022
 
 - minimize code to lift out all the implementation to developer
 - improve socket factory to be singleton
