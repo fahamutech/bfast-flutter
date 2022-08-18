@@ -3,6 +3,7 @@
 Refer to [BFastProject](http://bfast.fahamutech.com/docs) for better documentations.
 Always use latest version
 
+## [5.0.0-beta.1] - 18/08/2022
 ## [5.0.0-beta.0] - 16/08/2022
 
 - minimize code to lift out all the implementation to developer
@@ -14,11 +15,11 @@ Always use latest version
 ## [4.1.0] - 04/10/2021
 
 remove ttl in cache.
-update depencies.
+update dependencies.
 
 ## [4.0.0-beta.1] - 12/11/2020
 
-Upgade to bfast 2.x API, add realtime API and cache
+Upgrade to bfast 2.x API, add realtime API and cache
 
 ## [3.0.0-beta.0] - 06/07/2020
 

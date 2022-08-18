@@ -4,8 +4,8 @@ import '../model/raw_response.dart';
 import '../util.dart';
 
 // ((a) -> b) -> map(b.body-> Map)
-executeRule<T>(Function() httpPost) async {
-  RawResponse response = await httpPost();
+executeRule(Function() httpRequest) async {
+  RawResponse response = await httpRequest();
   var isOk = (_) => '${response.statusCode}'.startsWith('20');
   var exposeErr = compose([
     map((m) => {'errors': m}),
@@ -18,8 +18,8 @@ executeRule<T>(Function() httpPost) async {
 // this will be running in the app specific code
 // var ruleResult = compose([ifThrow((x)=>errorsMessage(x)!='', (x)=>x)]);
 
-_errorIsMap(e) => ifDoElse((_) => e['errors'] != null,
-    (_) => jsonEncode(e['errors']), (_) => '')('');
+_errorIsMap(e) => ifDoElse(
+    (_) => e['errors'] != null, (_) => jsonEncode(e['errors']), (_) => '')('');
 
 //  * -> String
 errorsMessage(dynamic e) =>
